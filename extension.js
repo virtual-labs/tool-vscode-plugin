@@ -14,22 +14,35 @@ function activate(context) {
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
 
-	const options = ["Clone the experiment template",
-	"Build the experiment on the local machine",
-	"Run validations and performance measurement",
-	"Instantiate a web-server"
-	]
+	let options = [
+	{
+		label:"Command 1",
+		description:"Clone the experiment template",
+	},
+	{
+		label:"Command 2",
+		description:"Build the experiment on the local machine",
+	},
+	{
+		label:"Command 3",
+		description:"Run validations and performance measurement",
+	},
+	{
+		label:"Command 4",
+		description:"Instantiate a web-server",
+	}
+	];
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand(
 		'virtual-labs-experiment-generator.virtualLabs', 
-		function () {
-			const functionality = vscode.window.showQuickPick(options,{
-				matchOnDetail: true
-			})
-		// The code you place here will be executed every time your command is executed
-			console.log(functionality)
+		async function () {
+			const functionality = await vscode.window.showQuickPick(options)
+			if(functionality==null) return;
+			console.log(functionality.label);
+			console.log(functionality.description);
+
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Virtual Labs Experiment Generator is now Active!');
 	});
