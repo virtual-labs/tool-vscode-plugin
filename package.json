@@ -10,13 +10,13 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:virtual-labs-experiment-generator.helloWorld"
+    "onCommand:virtual-labs-experiment-generator.virtualLabs"
   ],
   "main": "./extension.js",
   "contributes": {
     "commands": [{
-      "command": "virtual-labs-experiment-generator.helloWorld",
-      "title": "Hello World"
+      "command": "virtual-labs-experiment-generator.virtualLabs",
+      "title": "Virtual Labs"
     }]
   },
   "scripts": {
