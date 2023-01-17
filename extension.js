@@ -1,6 +1,7 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
+var Git=require('nodegit');
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -16,8 +17,8 @@ function activate(context) {
 
 	let options = [
 	{
-		label:"Command 1",
-		description:"Clone the experiment template",
+		label:"Clone the experiment repository",
+		description:"Clones the experiment repository from the Virtual Labs github",
 	},
 	{
 		label:"Command 2",
@@ -40,6 +41,37 @@ function activate(context) {
 		async function () {
 			const functionality = await vscode.window.showQuickPick(options)
 			if(functionality==null) return;
+			if(functionality.label=="Clone the experiment repository")
+			{
+				// ask for the experiment name
+				const experimentName = await vscode.window.showInputBox({
+					placeHolder: "Enter the experiment name",
+					validateInput: text => {
+						if (text.length < 1) {
+							return 'Experiment name cannot be empty';
+						}
+						return null;
+					}
+				});
+				if(experimentName==null) return;
+				let link="https://github.com/virtual-labs/"+experimentName;
+				// clone the repository
+				Git.Clone(link, "./"+experimentName)
+				.catch(function(err) { vscode.window.showErrorMessage(err); });
+				// .then(function(repository) {
+				// 	//check if the repo is valid
+				// 	if(repository==null)
+				// 	{
+				// 		vscode.window.showErrorMessage('The repository is not valid');
+				// 		return;
+				// 	}
+				// 	// Work with the repository object here.
+				// 	vscode.window.showInformationMessage('Cloned '+experimentName+' to '+repository.workdir());
+				// })
+					
+				
+				
+			}
 			console.log(functionality.label);
 			console.log(functionality.description);
 

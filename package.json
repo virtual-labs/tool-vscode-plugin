@@ -14,10 +14,12 @@
   ],
   "main": "./extension.js",
   "contributes": {
-    "commands": [{
-      "command": "virtual-labs-experiment-generator.virtualLabs",
-      "title": "Virtual Labs"
-    }]
+    "commands": [
+      {
+        "command": "virtual-labs-experiment-generator.virtualLabs",
+        "title": "Virtual Labs"
+      }
+    ]
   },
   "scripts": {
     "lint": "eslint .",
