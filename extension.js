@@ -1,8 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-const path=require('path');
-const{execSync}=require('child_process');
+// const path=require('path');
+// const{execSync}=require('child_process');
+const simpleGit = require('simple-git');
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -10,6 +11,14 @@ const{execSync}=require('child_process');
 /**
  * @param {vscode.ExtensionContext} context
  */
+function handlerFn(err) {
+	if (err) {
+		vscode.window.showErrorMessage("Error while cloning the repository");
+	}
+	else {
+		vscode.window.showInformationMessage("Repository cloned successfully");
+	}
+}
 function activate(context) {
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -55,11 +64,17 @@ function activate(context) {
 					}
 				});
 				if(experimentName==null) return;
-				let link='git@github.com:virtual-labs/'+experimentName+'.git';
-				execSync(`git clone ${link}`,
-				{
-					cwd:path.resolve("/home/gautam/Desktop/3-2/btp-1/VS-Code-Plugin",'')
-				});				
+				let link='https://github.com/virtual-labs/'+experimentName+'.git';
+				// clone the repository using simple-git
+				const git = simpleGit();
+				const  options = ['--depth', '1'];
+				const path="/home/gautam/Desktop/3-2/btp-1/VS-Code-Plugin"+"/"+experimentName;
+				git.clone(link,path,options,handlerFn);
+				
+				// execSync(`git clone ${link}`,
+				// {
+				// 	cwd:path.resolve("/home/gautam/Desktop/3-2/btp-1/VS-Code-Plugin",'')
+				// });				
 			}
 			console.log(functionality.label);
 			console.log(functionality.description);
