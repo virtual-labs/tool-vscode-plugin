@@ -73,7 +73,8 @@ function activate(context) {
 				// clone the repository using simple-git
 				let git = simpleGit();
 				const  options = ['--depth', '1', '--branch', branch];
-				const path="/home/gautam/Desktop/3-2/btp-1/VS-Code-Plugin"+"/"+experimentName;
+				// get cwd
+				const path=__dirname+"/"+experimentName;
 				git.clone(link,path,options,handlerFn);
 				
 				// execSync(`git clone ${link}`,
