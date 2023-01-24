@@ -13,6 +13,7 @@ const simpleGit = require('simple-git');
  */
 function handlerFn(err) {
 	if (err) {
+		console.log(err);
 		vscode.window.showErrorMessage("Error while cloning the repository");
 	}
 	else {
@@ -63,11 +64,15 @@ function activate(context) {
 						return null;
 					}
 				});
+				// build an array of branch options
+				const branchOptions = ["dev","testing","main"];
+				// drop down to select the branch
+				const branch = await vscode.window.showQuickPick(branchOptions);
 				if(experimentName==null) return;
 				let link='https://github.com/virtual-labs/'+experimentName+'.git';
 				// clone the repository using simple-git
-				const git = simpleGit();
-				const  options = ['--depth', '1'];
+				let git = simpleGit();
+				const  options = ['--depth', '1', '--branch', branch];
 				const path="/home/gautam/Desktop/3-2/btp-1/VS-Code-Plugin"+"/"+experimentName;
 				git.clone(link,path,options,handlerFn);
 				
