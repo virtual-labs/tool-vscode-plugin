@@ -4,6 +4,9 @@ const vscode = require('vscode');
 // const path=require('path');
 // const{execSync}=require('child_process');
 const simpleGit = require('simple-git');
+const fs = require('fs');
+// import list of branches from config.json file
+const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -54,6 +57,9 @@ function activate(context) {
 			if(functionality==null) return;
 			if(functionality.label=="Clone the experiment repository")
 			{
+				// create a single popup window to enter the experiment name 
+
+				// show a single popup to enter experiment name and branch
 				// ask for the experiment name
 				const experimentName = await vscode.window.showInputBox({
 					placeHolder: "Enter the experiment name",
@@ -64,14 +70,18 @@ function activate(context) {
 						return null;
 					}
 				});
-				// build an array of branch options
-				const branchOptions = ["dev","testing","main"];
+				
+				let branches=config["branches"];
+
+				console.log(branches);
+				
 				// drop down to select the branch
-				const branch = await vscode.window.showQuickPick(branchOptions);
+				const branch = await vscode.window.showQuickPick(branches);
 				if(experimentName==null) return;
 				let link='https://github.com/virtual-labs/'+experimentName+'.git';
 				// clone the repository using simple-git
 				let git = simpleGit();
+				// get the list of branches from config.json
 				const  options = ['--depth', '1', '--branch', branch];
 				// get cwd
 				const path=__dirname+"/"+experimentName;

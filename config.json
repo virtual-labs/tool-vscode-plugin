@@ -1,0 +1,7 @@
+{
+    "branches":[
+        "dev",
+        "testing",
+        "main"
+    ]
+}
