@@ -94,7 +94,8 @@ function activate(context) {
 								// check if the branch already exists
 								if(config.branches.includes(branch)){
 									vscode.window.showInformationMessage("Branch already exists");
-									return;
+									panel.webview.html = getWebviewContent();
+									return
 								}
 								else{
 									config.branches.push(branch);
@@ -121,6 +122,7 @@ function activate(context) {
 								
 								if(config.organizations.includes(organization)){
 									vscode.window.showInformationMessage("Organization already exists");
+									panel.webview.html = getWebviewContent();
 									return;
 								}
 								const url='https://github.com/' + organization;
@@ -131,6 +133,7 @@ function activate(context) {
 									}
 									if(response.statusCode==404){
 										vscode.window.showErrorMessage("Organization does not exist");
+										panel.webview.html = getWebviewContent();
 										return;
 									}
 									else{
@@ -165,31 +168,127 @@ function getWebviewContent(){
    <head>
 	   <meta charset="UTF-8">
 	   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <!-- Move the title to centre-->
+         <style>
+              h1 {
+                text-align: center;
+              }
+              .Organization {
+                margin: auto;
+                width: 60%;
+                border: 3px solid #73AD21;
+                padding: 10px;
+                font-weight: bold;
+              }
+              .Experiment{
+                margin: auto;
+                width: 60%;
+                border: 3px solid #73AD21;
+                padding: 10px;
+                font-weight: bold;
+              }
+                .Branch{
+                    margin: auto;
+                    width: 60%;
+                    border: 3px solid #73AD21;
+                    padding: 10px;
+                    font-weight: bold;
+                }
+                .Button {
+                    margin: 0;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    -ms-transform: translate(-50%, -50%);
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    background-color: #03b1fc;
+                    border: none;
+                    padding: 15px 32px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;
+                    cursor: pointer;
+                    border-radius: 12px;
+                }
+                .bigButton{
+                    margin: 0;
+                    position: absolute;
+                    top: 40%;
+                    left: 50%;
+                    -ms-transform: translate(-50%, -50%); 
+                    transform: translate(-50%, -50%);
+                    color: white;
+                    background-color: #03b1fc;
+                    border: none;
+                    padding: 15px 32px; 
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;
+                    cursor: pointer;
+                    border-radius: 12px;
+                }
+                #smallButton{
+                    background-color: #03b1fc;
+                    color: white;
+                    border-radius: 8px;
+                    border: none;
+                }
+                .Name{
+                    margin: auto;
+                    text-align: center;
+                    width: 35%;
+                    padding: 10px;
+                }
+              div {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+                text-align: center;
+              }
+              label {
+                margin-right: 10px;
+              }
+              input {
+                margin-right: 10px;
+              }
+              button {
+                margin-left: 10px;
+              }
+              
+        </style>
 	   <title>Virtual Labs Experiment Generator</title>
    </head>
    
    <body>
 	   <h1>Virtual Labs Experiment Generator</h1>
-	   <p>Enter the experiment name and branch</p>
-	   <div>
+	   <div class="Organization">
 		   <label for="organization">Organization</label>
 		   <select id="organization" name="organization" >
 			${organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('')}				
 			</select>
-			<button id="addOrganization" onclick="addOrganization()">Add Organization</button>
+			<button id="smallButton" onclick="addOrganization()">Add Organization</button>
 	   </div>
-	   <div>
-		   <label for="experimentName">Experiment Name</label>
-		   <input type="text" id="experimentName" name="experimentName" >
+	   <div class="Experiment">
+           <label for="experimentName">Experiment Name</label>
+            <div class="Name">
+                <input type="text" id="experimentName" name="experimentName" >
+            </div>
 	   </div>
-	   <div>
+	   <div class="Branch">
 		   <label for="branch">Branch</label>
 		   <select id="branch" name="branch" >
 			${branches.map(branch => `<option value="${branch}">${branch}</option>`).join('')}				
 			</select>
-			<button id="addBranch" onclick="addBranch()">Add Branch</button>
+			<button id="smallButton" onclick="addBranch()">Add Branch</button>
 	   </div>
-	   <button id="submit" onclick="clone()";  >Submit</button>
+        <button id="Submit" onclick="clone()" class="bigButton">Submit</button>
+	   
 	   <script>
 		   function clone() {
 			   const vscode = acquireVsCodeApi();
