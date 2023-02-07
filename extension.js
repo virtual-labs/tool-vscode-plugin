@@ -4,8 +4,7 @@ const vscode = require('vscode');
 const simpleGit = require('simple-git');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
-let https = require('https');
-
+const request = require('request');
 
 //const getWebviewContent = require('./webview.js').getWebviewContent;
 /**
@@ -124,24 +123,24 @@ function activate(context) {
 									vscode.window.showInformationMessage("Organization already exists");
 									return;
 								}
-								const url = 'https://api.github.com/orgs/' + organization;
-								// make a get request and extract the status code using https module
-								const response = await new Promise((resolve, reject) => {
-									https.get(url, (res) => {
-										resolve(res.statusCode);
-									});
+								const url='https://github.com/' + organization;
+								request.head(url,(error,response,body)=>{
+									if(error){
+										console.log(error);
+										return;
+									}
+									if(response.statusCode==404){
+										vscode.window.showErrorMessage("Organization does not exist");
+										return;
+									}
+									else{
+										config.organizations.push(organization);
+										fs.writeFileSync(__dirname + '/config.json', JSON.stringify(config));
+										panel.webview.html = getWebviewContent();
+										vscode.window.showInformationMessage('Organization added successfully');
+									}
+									console.log(response.statusCode);
 								});
-								console.log(response);
-								if (response == 404){
-									vscode.window.showInformationMessage("Organization does not exist");
-									return;
-								}
-								else{
-									config.organizations.push(organization);
-									fs.writeFileSync(__dirname + '/config.json', JSON.stringify(config));
-									panel.webview.html = getWebviewContent();
-									vscode.window.showInformationMessage('Organization added successfully');
-								}
 							}
 							addOrganization();
 							break;
