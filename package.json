@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "jsdom": "^21.1.0",
+    "node-fetch": "^3.3.0",
     "node-gyp": "^9.3.1",
     "node-pre-gyp": "^0.17.0",
     "simple-git": "^3.16.0"

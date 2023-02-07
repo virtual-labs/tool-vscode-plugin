@@ -1,7 +1,1 @@
-{
-    "branches":[
-        "dev",
-        "testing",
-        "main"
-    ]
-}
+{"branches":["dev","testing","main"],"organizations":["virtual-labs"]}

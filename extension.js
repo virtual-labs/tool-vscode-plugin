@@ -4,6 +4,7 @@ const vscode = require('vscode');
 const simpleGit = require('simple-git');
 const fs = require('fs');
 const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+let https = require('https');
 
 
 //const getWebviewContent = require('./webview.js').getWebviewContent;
@@ -64,9 +65,10 @@ function activate(context) {
 				panel.webview.onDidReceiveMessage( message => {
 					switch (message.command) {
 						case'clone':
-							let experimentName = message.experimentName;
-							let branch = message.branch;
-							const link = 'https://github.com/virtual-labs/' + experimentName + '.git';
+							const experimentName = message.experimentName;
+							const branch = message.branch;
+							const organization = message.organization;
+							const link = 'https://github.com/' + organization + '/' + experimentName + '.git';
 							const git = simpleGit();
 							const options = ['--depth', '1', '--branch', branch];
 							const path = __dirname + "/" + experimentName;
@@ -79,6 +81,70 @@ function activate(context) {
 							git.clone(link, path, options, handlerFn);	
 							panel.dispose();						
 							break;
+						 case 'addBranch':
+							// take a text input from the user and add it to the config file using async await
+							async function addBranch(){
+								const branch = await vscode.window.showInputBox( { 
+									placeHolder: "Enter the branch name",
+									validateInput: (value) => {
+										if(value == null) return;
+										if(value.length == 0) return "Branch name cannot be empty";
+									}
+								});
+								if(branch == null) return;
+								// check if the branch already exists
+								if(config.branches.includes(branch)){
+									vscode.window.showInformationMessage("Branch already exists");
+									return;
+								}
+								else{
+									config.branches.push(branch);
+									fs.writeFileSync(__dirname + '/config.json', JSON.stringify(config));
+									panel.webview.html = getWebviewContent();
+									vscode.window.showInformationMessage('Branch added successfully');
+								}
+							}
+							addBranch();	
+							break;	
+						case 'addOrganization':
+							// take a text input from the user and add it to the config file using async await
+							async function addOrganization(){
+								const organization = await vscode.window.showInputBox( { 
+									placeHolder: "Enter the organization name",
+									validateInput: (value) => {
+										if(value == null) return;
+										if(value.length == 0) return "Organization name cannot be empty";
+									}
+								});
+								if(organization == null) return;
+								// check on github if the organization exists
+								
+								
+								if(config.organizations.includes(organization)){
+									vscode.window.showInformationMessage("Organization already exists");
+									return;
+								}
+								const url = 'https://api.github.com/orgs/' + organization;
+								// make a get request and extract the status code using https module
+								const response = await new Promise((resolve, reject) => {
+									https.get(url, (res) => {
+										resolve(res.statusCode);
+									});
+								});
+								console.log(response);
+								if (response == 404){
+									vscode.window.showInformationMessage("Organization does not exist");
+									return;
+								}
+								else{
+									config.organizations.push(organization);
+									fs.writeFileSync(__dirname + '/config.json', JSON.stringify(config));
+									panel.webview.html = getWebviewContent();
+									vscode.window.showInformationMessage('Organization added successfully');
+								}
+							}
+							addOrganization();
+							break;
 					}
 				}, undefined, context.subscriptions);
 			}
@@ -90,6 +156,10 @@ function activate(context) {
 }
 function getWebviewContent(){
    // return the html content and update the global variables EXP_NAME and BRANCH
+   // get a list of branches from the config file
+
+   const branches = config.branches;
+   const organizations = config.organizations;
    return `<!DOCTYPE html>
    <html lang="en">
    
@@ -103,29 +173,49 @@ function getWebviewContent(){
 	   <h1>Virtual Labs Experiment Generator</h1>
 	   <p>Enter the experiment name and branch</p>
 	   <div>
+		   <label for="organization">Organization</label>
+		   <select id="organization" name="organization" >
+			${organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('')}				
+			</select>
+			<button id="addOrganization" onclick="addOrganization()">Add Organization</button>
+	   </div>
+	   <div>
 		   <label for="experimentName">Experiment Name</label>
 		   <input type="text" id="experimentName" name="experimentName" >
 	   </div>
 	   <div>
 		   <label for="branch">Branch</label>
 		   <select id="branch" name="branch" >
-				<option value="dev">dev</option>
-				<option value="testing">testing</option>
-				</select>
+			${branches.map(branch => `<option value="${branch}">${branch}</option>`).join('')}				
+			</select>
+			<button id="addBranch" onclick="addBranch()">Add Branch</button>
 	   </div>
 	   <button id="submit" onclick="clone()";  >Submit</button>
 	   <script>
 		   function clone() {
 			   const vscode = acquireVsCodeApi();
 			   experimentName = document.getElementById("experimentName").value;
+			   organization = document.getElementById("organization").value;
 			   branch = document.getElementById("branch").value;
 			   vscode.postMessage({
 				   command: 'clone',
 				   experimentName: experimentName,
+				   organization: organization,
 				   branch: branch
 			   });
 		   }
-   
+		   function addBranch(){
+			   const vscode = acquireVsCodeApi();
+			   vscode.postMessage({
+				   command: 'addBranch'
+			   });
+			}	
+			function addOrganization(){
+				const vscode = acquireVsCodeApi();
+				vscode.postMessage({
+					command: 'addOrganization'
+				});	
+			}   
 	   </script>
    </body>
    
