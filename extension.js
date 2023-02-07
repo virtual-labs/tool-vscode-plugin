@@ -1,16 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
-// const path=require('path');
-// const{execSync}=require('child_process');
 const simpleGit = require('simple-git');
 const fs = require('fs');
-// import list of branches from config.json file
 const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 
-// This method is called when your extension is activated
-// Your extension is activated the very first time the command is executed
 
+//const getWebviewContent = require('./webview.js').getWebviewContent;
 /**
  * @param {vscode.ExtensionContext} context
  */
@@ -23,87 +19,121 @@ function handlerFn(err) {
 		vscode.window.showInformationMessage("Repository cloned successfully");
 	}
 }
+
 function activate(context) {
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
 
 	let options = [
-	{
-		label:"Clone the experiment repository",
-		description:"Clones the experiment repository from the Virtual Labs github",
-	},
-	{
-		label:"Command 2",
-		description:"Build the experiment on the local machine",
-	},
-	{
-		label:"Command 3",
-		description:"Run validations and performance measurement",
-	},
-	{
-		label:"Command 4",
-		description:"Instantiate a web-server",
-	}
+		{
+			label: "Clone the experiment repository",
+			description: "Clones the experiment repository from the Virtual Labs github",
+		},
+		{
+			label: "Command 2",
+			description: "Build the experiment on the local machine",
+		},
+		{
+			label: "Command 3",
+			description: "Run validations and performance measurement",
+		},
+		{
+			label: "Command 4",
+			description: "Instantiate a web-server",
+		}
 	];
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with  registerCommand
-	// The commandId parameter must match the command field in package.json
+
 	let disposable = vscode.commands.registerCommand(
-		'virtual-labs-experiment-generator.virtualLabs', 
+		'virtual-labs-experiment-generator.virtualLabs',
 		async function () {
 			const functionality = await vscode.window.showQuickPick(options)
-			if(functionality==null) return;
-			if(functionality.label=="Clone the experiment repository")
-			{
-				// create a single popup window to enter the experiment name 
+			if (functionality == null) return;
+			if (functionality.label == "Clone the experiment repository") {
 
-				// show a single popup to enter experiment name and branch
-				// ask for the experiment name
-				const experimentName = await vscode.window.showInputBox({
-					placeHolder: "Enter the experiment name",
-					validateInput: text => {
-						if (text.length < 1) {
-							return 'Experiment name cannot be empty';
-						}
-						return null;
+				// open a vs code webview dialog box to enter the experiment name and branch
+				const panel = vscode.window.createWebviewPanel(
+					'virtualLabs', // Identifies the type of the webview. Used internally
+					'Virtual Labs Experiment Generator', // Title of the panel displayed to the user
+					vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+					{
+						enableScripts: true
+					} 
+				);
+				
+				panel.webview.html = getWebviewContent();
+				panel.webview.onDidReceiveMessage( message => {
+					switch (message.command) {
+						case'clone':
+							let experimentName = message.experimentName;
+							let branch = message.branch;
+							const link = 'https://github.com/virtual-labs/' + experimentName + '.git';
+							const git = simpleGit();
+							const options = ['--depth', '1', '--branch', branch];
+							const path = __dirname + "/" + experimentName;
+							// check if the experiment is already cloned
+							if(fs.existsSync(path)){
+								vscode.window.showInformationMessage("Experiment Repository already exists");
+								panel.dispose();
+								break;
+							}							
+							git.clone(link, path, options, handlerFn);	
+							panel.dispose();						
+							break;
 					}
-				});
-				
-				let branches=config["branches"];
-
-				console.log(branches);
-				
-				// drop down to select the branch
-				const branch = await vscode.window.showQuickPick(branches);
-				if(experimentName==null) return;
-				let link='https://github.com/virtual-labs/'+experimentName+'.git';
-				// clone the repository using simple-git
-				let git = simpleGit();
-				// get the list of branches from config.json
-				const  options = ['--depth', '1', '--branch', branch];
-				// get cwd
-				const path=__dirname+"/"+experimentName;
-				git.clone(link,path,options,handlerFn);
-				
-				// execSync(`git clone ${link}`,
-				// {
-				// 	cwd:path.resolve("/home/gautam/Desktop/3-2/btp-1/VS-Code-Plugin",'')
-				// });				
+				}, undefined, context.subscriptions);
 			}
-			console.log(functionality.label);
-			console.log(functionality.description);
 
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Virtual Labs Experiment Generator is now Active!');
-	});
+			vscode.window.showInformationMessage('Virtual Labs Experiment Generator is now Active!');
+		});
 
 	context.subscriptions.push(disposable);
 }
+function getWebviewContent(){
+   // return the html content and update the global variables EXP_NAME and BRANCH
+   return `<!DOCTYPE html>
+   <html lang="en">
+   
+   <head>
+	   <meta charset="UTF-8">
+	   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	   <title>Virtual Labs Experiment Generator</title>
+   </head>
+   
+   <body>
+	   <h1>Virtual Labs Experiment Generator</h1>
+	   <p>Enter the experiment name and branch</p>
+	   <div>
+		   <label for="experimentName">Experiment Name</label>
+		   <input type="text" id="experimentName" name="experimentName" >
+	   </div>
+	   <div>
+		   <label for="branch">Branch</label>
+		   <select id="branch" name="branch" >
+				<option value="dev">dev</option>
+				<option value="testing">testing</option>
+				</select>
+	   </div>
+	   <button id="submit" onclick="clone()";  >Submit</button>
+	   <script>
+		   function clone() {
+			   const vscode = acquireVsCodeApi();
+			   experimentName = document.getElementById("experimentName").value;
+			   branch = document.getElementById("branch").value;
+			   vscode.postMessage({
+				   command: 'clone',
+				   experimentName: experimentName,
+				   branch: branch
+			   });
+		   }
+   
+	   </script>
+   </body>
+   
+   </html>`;
+}
 
 // This method is called when your extension is deactivated
-function deactivate() {}
+function deactivate() { }
 
 module.exports = {
 	activate,
