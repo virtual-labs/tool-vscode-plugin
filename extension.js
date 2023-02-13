@@ -70,7 +70,7 @@ function activate(context) {
 							const link = 'https://github.com/' + organization + '/' + experimentName + '.git';
 							const git = simpleGit();
 							const options = ['--depth', '1', '--branch', branch];
-							const path = __dirname + "/" + experimentName;
+							const path=vscode.workspace.workspaceFolders[0].uri.fsPath + '/' + experimentName;							
 							// check if the experiment is already cloned
 							if(fs.existsSync(path)){
 								vscode.window.showInformationMessage("Experiment Repository already exists");
