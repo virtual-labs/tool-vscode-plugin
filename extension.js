@@ -3,9 +3,34 @@
 const vscode = require('vscode');
 const simpleGit = require('simple-git');
 const fs = require('fs');
+const {JSDOM} = require("jsdom");
 const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 const request = require('request');
-
+const {clone, addBranch, addOrganization} = require("./webview.js");
+// function clone(experimentName,organization,branch) {
+// 	const vscode = acquireVsCodeApi();
+// 	const expName = experimentName;
+// 	const org = organization;
+// 	const branches = branch;
+// 	vscode.postMessage({
+// 		command: 'clone',
+// 		experimentName: expName,
+// 		organization: org,
+// 		branch: branches
+// 	});
+// }
+// function addBranch(){
+// 	const vscode = acquireVsCodeApi();
+// 	vscode.postMessage({
+// 		command: 'addBranch'
+// 	});
+// }	
+// function addOrganization(){
+// 	const vscode = acquireVsCodeApi();
+// 	vscode.postMessage({
+// 		command: 'addOrganization'
+// 	});	
+// }
 //const getWebviewContent = require('./webview.js').getWebviewContent;
 /**
  * @param {vscode.ExtensionContext} context
@@ -156,170 +181,66 @@ function activate(context) {
 
 	context.subscriptions.push(disposable);
 }
+
+
+
 function getWebviewContent(){
    // return the html content and update the global variables EXP_NAME and BRANCH
    // get a list of branches from the config file
 
-   const branches = config.branches;
-   const organizations = config.organizations;
+//    const branches = config.branches;
+//    const organizations = config.organizations;
   // return the file webview.html
-   return `<!DOCTYPE html>
-   <html lang="en">
-   
-   <head>
-	   <meta charset="UTF-8">
-	   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	   <!-- Move the title to centre-->
-		 <style>
-			  h1 {
-				text-align: center;
-			  }
-			  .Organization {
-				margin: auto;
-				width: 60%;
-				border: 3px solid #73AD21;
-				padding: 10px;
-				font-weight: bold;
-			  }
-			  .Experiment{
-				margin: auto;
-				width: 60%;
-				border: 3px solid #73AD21;
-				padding: 10px;
-				font-weight: bold;
-			  }
-				.Branch{
-					margin: auto;
-					width: 60%;
-					border: 3px solid #73AD21;
-					padding: 10px;
-					font-weight: bold;
-				}
-				.Button {
-					margin: 0;
-					position: absolute;
-					top: 50%;
-					left: 50%;
-					-ms-transform: translate(-50%, -50%);
-					transform: translate(-50%, -50%);
-					color: white;
-					background-color: #03b1fc;
-					border: none;
-					padding: 15px 32px;
-					text-align: center;
-					text-decoration: none;
-					display: inline-block;
-					font-size: 16px;
-					margin: 4px 2px;
-					cursor: pointer;
-					border-radius: 12px;
-				}
-				.bigButton{
-					margin: 0;
-					position: absolute;
-					top: 40%;
-					left: 50%;
-					-ms-transform: translate(-50%, -50%); 
-					transform: translate(-50%, -50%);
-					color: white;
-					background-color: #03b1fc;
-					border: none;
-					padding: 15px 32px; 
-					text-align: center;
-					text-decoration: none;
-					display: inline-block;
-					font-size: 16px;
-					margin: 4px 2px;
-					cursor: pointer;
-					border-radius: 12px;
-				}
-				#smallButton{
-					background-color: #03b1fc;
-					color: white;
-					border-radius: 8px;
-					border: none;
-				}
-				.Name{
-					margin: auto;
-					text-align: center;
-					width: 35%;
-					padding: 10px;
-				}
-			  div {
-				display: flex;
-				flex-direction: row;
-				justify-content: space-between;
-				align-items: center;
-				text-align: center;
-			  }
-			  label {
-				margin-right: 10px;
-			  }
-			  input {
-				margin-right: 10px;
-			  }
-			  button {
-				margin-left: 10px;
-			  }
-			  
-		</style>
-	   <title>Virtual Labs Experiment Generator</title>
-   </head>
-   
-   <body>
-	   <h1>Virtual Labs Experiment Generator</h1>
-	   <div class="Organization">
-		   <label for="organization">Organization</label>
-		   <select id="organization" name="organization" >
-			${organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('')}				
-			</select>
-			<button id="smallButton" onclick="addOrganization()">Add Organization</button>
-	   </div>
-	   <div class="Experiment">
-		   <label for="experimentName">Experiment Name</label>
-			<div class="Name">
-				<input type="text" id="experimentName" name="experimentName" >
-			</div>
-	   </div>
-	   <div class="Branch">
-		   <label for="branch">Branch</label>
-		   <select id="branch" name="branch" >
-			${branches.map(branch => `<option value="${branch}">${branch}</option>`).join('')}				
-			</select>
-			<button id="smallButton" onclick="addBranch()">Add Branch</button>
-	   </div>
-		<button id="Submit" onclick="clone()" class="bigButton">Submit</button>
-	   
-	   <script>
-		   function clone() {
-			   const vscode = acquireVsCodeApi();
-			   experimentName = document.getElementById("experimentName").value;
-			   organization = document.getElementById("organization").value;
-			   branch = document.getElementById("branch").value;
-			   vscode.postMessage({
-				   command: 'clone',
-				   experimentName: experimentName,
-				   organization: organization,
-				   branch: branch
-			   });
-		   }
-		   function addBranch(){
-			   const vscode = acquireVsCodeApi();
-			   vscode.postMessage({
-				   command: 'addBranch'
-			   });
-			}	
-			function addOrganization(){
-				const vscode = acquireVsCodeApi();
-				vscode.postMessage({
-					command: 'addOrganization'
-				});	
-			}   
-	   </script>
-   </body>
-   
-   </html>`;    
+	const html = fs.readFileSync(__dirname + '/webview.html', 'utf8');
+	console.log(html)
+	const dom = new JSDOM(html);
+	const { document } = dom.window;
+
+	// // const js = fs.readFileSync(__dirname + '/webview.js', 'utf8');
+	// // const script = document.createElement('script');
+	// // script.textContent = js;
+	// // document.body.appendChild(script);
+
+	// // fetch config, do dom manipulation and add the data to html dropdowns
+	const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+	const organization = config.organizations;
+	const branch = config.branches;
+
+	const branches = document.getElementById('branch');
+
+	for (let i = 0; i < branch.length; i++) {
+		const option = document.createElement('option');
+		option.text = branch[i];
+		branches.add(option);
+	}
+	const organizations = document.getElementById('organization');
+
+	for (let i = 0; i < organization.length; i++) {
+		const option = document.createElement('option');
+		option.text = organization[i];
+		organizations.add(option);
+	}
+
+	const experimentName = document.getElementById("experimentName")
+	const org = document.getElementById("organization")
+	const branc = document.getElementById("branch")
+
+	const submitButton = document.getElementById('submit');
+	submitButton.addEventListener('click', clone(experimentName,org,branc));
+
+	const addBranchButton = document.getElementById('addBranch');
+	addBranchButton.addEventListener('click', addBranch);
+
+	const addOrganizationButton = document.getElementById('addOrganization');
+	addOrganizationButton.addEventListener('click', addOrganization);
+	
+	// update the html content after adding the script
+	const updatedHtml = dom.serialize();
+	return updatedHtml;
+
+//    return html;    
 }
+
 
 // This method is called when your extension is deactivated
 function deactivate() { }

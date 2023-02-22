@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Move the title to centre-->
+        <style>
+            h1 {
+            text-align: center;
+            }
+            .Organization {
+            margin: auto;
+            width: 60%;
+            border: 3px solid #73AD21;
+            padding: 10px;
+            font-weight: bold;
+            }
+            .Experiment{
+            margin: auto;
+            width: 60%;
+            border: 3px solid #73AD21;
+            padding: 10px;
+            font-weight: bold;
+            }
+            .Branch{
+                margin: auto;
+                width: 60%;
+                border: 3px solid #73AD21;
+                padding: 10px;
+                font-weight: bold;
+            }
+            .Button {
+                margin: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+                color: white;
+                background-color: #03b1fc;
+                border: none;
+                padding: 15px 32px;
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 12px;
+            }
+            .bigButton{
+                margin: 0;
+                position: absolute;
+                top: 40%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%); 
+                transform: translate(-50%, -50%);
+                color: white;
+                background-color: #03b1fc;
+                border: none;
+                padding: 15px 32px; 
+                text-align: center;
+                text-decoration: none;
+                display: inline-block;
+                font-size: 16px;
+                margin: 4px 2px;
+                cursor: pointer;
+                border-radius: 12px;
+            }
+            #smallButton{
+                background-color: #03b1fc;
+                color: white;
+                border-radius: 8px;
+                border: none;
+            }
+            .Name{
+                margin: auto;
+                text-align: center;
+                width: 35%;
+                padding: 10px;
+            }
+            div {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            }
+            label {
+            margin-right: 10px;
+            }
+            input {
+            margin-right: 10px;
+            }
+            button {
+            margin-left: 10px;
+            }
+            
+    </style>
+    <script type="module" src="./webview.js"></script>
+    <title>Virtual Labs Experiment Generator</title>
+</head>
+
+<body>
+    <!-- <script src = "./webview.js"></script> -->
+    <h1>Virtual Labs Experiment Generator</h1>
+    <div class="Organization">
+        <label for="organization">Organization</label>
+            <select id="organization" name="organization" >
+                Organization
+        <!-- ${organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('')}				 -->
+        </select>
+        <button id="smallButton" onclick="addOrganization()">Add Organization</button>
+    </div>
+    <div class="Experiment">
+        <label for="experimentName">Experiment Name</label>
+        <div class="Name">
+            <input type="text" id="experimentName" name="experimentName" >
+        </div>
+    </div>
+    <div class="Branch">
+        <label for="branch">Branch</label>
+        <select id="branch" name="branch" >
+        <!-- ${branches.map(branch => `<option value="${branch}">${branch}</option>`).join('')}				 -->
+        </select>
+        <button id="smallButton" >Add Branch</button>
+    </div>
+    <button id="submit" class="bigButton">Submit</button>
+    
+    <!-- <script src = "./test.js"></script> -->
+</body>
+
+</html>
