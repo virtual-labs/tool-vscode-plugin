@@ -1,4 +1,4 @@
-const vscode = require('vscode');
+// const vscode = require('vscode');
 // const fs = require('fs');
 // const path = require('path');
 // require acquireVsCodeApi from the webview
@@ -28,6 +28,8 @@ const vscode = require('vscode');
 // document.getElementById('organization').innerHTML = organization;
 // document.getElementById('branch').innerHTML = branch;
 
+const vscode = acquireVsCodeApi()
+
 function clone(experimentName,organization,branch) {
 	// const vscode = acquireVsCodeApi();
 	const expName = experimentName;
@@ -53,10 +55,24 @@ function addOrganization(){
 	});	
 } 
 
-module.exports = {
-    clone,
-    addBranch,
-    addOrganization
-}
+const document = vscode.document
+
+	const experimentName = document.getElementById("experimentName")
+	const org = document.getElementById("organization")
+	const branc = document.getElementById("branch")
+
+	const submitButton = document.getElementById('submit');
+	submitButton.addEventListener('click', clone(experimentName,org,branc));
+
+	const addBranchButton = document.getElementById('addBranch');
+	addBranchButton.addEventListener('click', addBranch);
+
+	const addOrganizationButton = document.getElementById('addOrganization');
+	addOrganizationButton.addEventListener('click', addOrganization);
+// module.exports = {
+//     clone,
+//     addBranch,
+//     addOrganization
+// }
 
 

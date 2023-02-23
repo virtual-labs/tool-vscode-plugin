@@ -6,7 +6,7 @@ const fs = require('fs');
 const {JSDOM} = require("jsdom");
 const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 const request = require('request');
-const {clone, addBranch, addOrganization} = require("./webview.js");
+// const {clone, addBranch, addOrganization} = require("./webview.js");
 // function clone(experimentName,organization,branch) {
 // 	const vscode = acquireVsCodeApi();
 // 	const expName = experimentName;
@@ -84,8 +84,14 @@ function activate(context) {
 						enableScripts: true
 					} 
 				);
+				const scriptPath = vscode.Uri.joinPath(context.extensionUri, '.', 'webview.js');
+
+      			// And get the special URI to use with the webview
+      			const scriptUri = panel.webview.asWebviewUri(scriptPath);
+
+      			panel.webview.html = getWebviewContent(scriptUri);
 				
-				panel.webview.html = getWebviewContent();
+				// panel.webview.html = getWebviewContent();
 				panel.webview.onDidReceiveMessage( message => {
 					switch (message.command) {
 						case'clone':
@@ -183,8 +189,7 @@ function activate(context) {
 }
 
 
-
-function getWebviewContent(){
+function getWebviewContent(scriptUri){
    // return the html content and update the global variables EXP_NAME and BRANCH
    // get a list of branches from the config file
 
@@ -221,26 +226,18 @@ function getWebviewContent(){
 		organizations.add(option);
 	}
 
-	const experimentName = document.getElementById("experimentName")
-	const org = document.getElementById("organization")
-	const branc = document.getElementById("branch")
-
-	const submitButton = document.getElementById('submit');
-	submitButton.addEventListener('click', clone(experimentName,org,branc));
-
-	const addBranchButton = document.getElementById('addBranch');
-	addBranchButton.addEventListener('click', addBranch);
-
-	const addOrganizationButton = document.getElementById('addOrganization');
-	addOrganizationButton.addEventListener('click', addOrganization);
+	const webviewScript = document.createElement("script")
+	webviewScript.setAttribute("src", scriptUri)
+	document.head.appendChild(webviewScript)
 	
 	// update the html content after adding the script
 	const updatedHtml = dom.serialize();
+	console.log("Updated HTML ================>>>>")
+	console.log(updatedHtml)
 	return updatedHtml;
 
 //    return html;    
 }
-
 
 // This method is called when your extension is deactivated
 function deactivate() { }
