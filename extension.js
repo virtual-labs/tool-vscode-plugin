@@ -3,7 +3,6 @@
 const vscode = require('vscode');
 const simpleGit = require('simple-git');
 const fs = require('fs');
-const { JSDOM } = require("jsdom");
 const request = require('request');
 
 /**
@@ -19,59 +18,6 @@ function handlerFn(err) {
 	}
 }
 
-function updatedWebviewContent() {
-	const htmlContent = getWebviewContent();
-	const dom = new JSDOM(htmlContent, {
-	  runScripts: "dangerously"
-	});
-	const { document } = dom.window;
-	
-	const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
-	const organization = config.organizations;
-	const branch = config.branches;
-	
-	const branches = document.getElementById('branch');
-	
-	for (let i = 0; i < branch.length; i++) {
-	  const option = document.createElement('option');
-	  option.text = branch[i];
-	  branches.add(option);
-	}
-	
-	const organizations = document.getElementById('organization');
-	
-	for (let i = 0; i < organization.length; i++) {
-	  const option = document.createElement('option');
-	  option.text = organization[i];
-	  organizations.add(option);
-	}
-	
-	const webviewScript= document.createElement("script");
-	const jscontent = fs.readFileSync(__dirname + '/webview.js', 'utf8');
-	webviewScript.textContent = jscontent;
-
-
-	
-	webviewScript.addEventListener('load', function() {
-		// JS code has been loaded and is ready to execute
-		// Put your code here
-		console.log("here");
-	  });
-	document.body.appendChild(webviewScript);
-	
-	const style = document.createElement("style");
-	const csscontent = fs.readFileSync(__dirname + '/webview.css', 'utf8');
-	style.textContent = csscontent;
-	document.body.appendChild(style);
-	
-	// fire the load event manually for script
-	const updatedHtml = dom.serialize();
-	console.log(updatedHtml);
-	
-	return updatedHtml;
-
-
-}
 function activate(context) {
 
 	console.log('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
@@ -114,8 +60,11 @@ function activate(context) {
 				
 				
 				const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
-				const htmlContent= updatedWebviewContent();
-				panel.webview.html = htmlContent;
+				const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.js'));
+				console.log(scriptUri);
+				const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
+				
+				panel.webview.html = getWebviewContent(scriptUri,styleUri);
 
 				panel.webview.onDidReceiveMessage(message => {
 					switch (message.command) {
@@ -152,13 +101,13 @@ function activate(context) {
 									vscode.window.showInformationMessage("Branch already exists");
 									// reload the webview
 									
-									panel.webview.html = updatedWebviewContent();
+									panel.webview.html = getWebviewContent(scriptUri,styleUri);
 									return
 								}
 								else {
 									config.branches.push(branch);
 									fs.writeFileSync(__dirname + '/config.json', JSON.stringify(config));
-									panel.webview.html = updatedWebviewContent();
+									panel.webview.html = getWebviewContent(scriptUri,styleUri);
 									vscode.window.showInformationMessage('Branch added successfully');
 								}
 							}
@@ -181,7 +130,7 @@ function activate(context) {
 								if (config.organizations.includes(organization)) {
 									vscode.window.showInformationMessage("Organization already exists");
 									
-									panel.webview.html = updatedWebviewContent();
+									panel.webview.html = getWebviewContent(scriptUri,styleUri);
 									return;
 								}
 								const url = 'https://github.com/' + organization;
@@ -193,14 +142,14 @@ function activate(context) {
 									if (response.statusCode == 404) {
 										vscode.window.showErrorMessage("Organization does not exist");
 								
-										panel.webview.html = updatedWebviewContent();
+										panel.webview.html = getWebviewContent(scriptUri,styleUri);
 										return;
 									}
 									else {
 										config.organizations.push(organization);
 										fs.writeFileSync(__dirname + '/config.json', JSON.stringify(config));
 										
-										panel.webview.html = updatedWebviewContent();
+										panel.webview.html = getWebviewContent(scriptUri,styleUri);
 										vscode.window.showInformationMessage('Organization added successfully');
 									}
 									console.log(response.statusCode);
@@ -219,7 +168,17 @@ function activate(context) {
 }
 
 
-function getWebviewContent() {
+function getWebviewContent(scriptUri,styleUri) {
+
+console.log(scriptUri);
+console.log(styleUri);
+
+const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+const branches = config.branches;
+const organizations = config.organizations;
+const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
+const organizationOptions = organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('');
+
 
 return `
 	<!DOCTYPE html>
@@ -229,6 +188,7 @@ return `
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 			<title>Virtual Labs Experiment Generator</title>
+			<link rel="stylesheet" href="${styleUri}">
 		</head>
 
 		<body>
@@ -236,7 +196,7 @@ return `
 			<div class="Organization">
 				<label for="organization">Organization</label>
 				<select id="organization" name="organization">
-					Organization
+					${organizationOptions}
 						</select>
 				<button class="smallButton"  id="addOrganization">Add Organization</button>
 			</div>
@@ -249,10 +209,13 @@ return `
 			<div class="Branch">
 				<label for="branch">Branch</label>
 				<select id="branch" name="branch">
+					${branchOptions}
 				</select>
 				<button class="smallButton" id="addBranch">Add Branch</button>
 			</div>
 			<button id="submit" class="bigButton">Submit</button>
+			
+			<script  src="${scriptUri}"></script>
 		</body>
 
 		</html>`
