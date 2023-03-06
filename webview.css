@@ -67,7 +67,7 @@ h1 {
     border-radius: 12px;
 }
 
-#smallButton {
+.smallButton {
     background-color: #03b1fc;
     color: white;
     border-radius: 8px;

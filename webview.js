@@ -1,35 +1,32 @@
-const vscode = acquireVsCodeApi()
-
-function clone(experimentName, organization, branch) {
-	const expName = experimentName;
-	const org = organization;
-	const branches = branch;
-	vscode.postMessage({
-		command: 'clone',
-		experimentName: expName,
-		organization: org,
-		branch: branches
-	});
+const vscode = acquireVsCodeApi();
+function clone() {
+  
+  const experimentName = document.getElementById("experimentName").value;
+  const organization = document.getElementById("organization").value;
+  const branch = document.getElementById("branch").value;
+  vscode.postMessage({
+    command: 'clone',
+    experimentName: experimentName,
+    organization: organization,
+    branch: branch
+  });
 }
-function addBranch() {
-	vscode.postMessage({
-		command: 'addBranch'
-	});
-}
-function addOrganization() {
-	vscode.postMessage({
-		command: 'addOrganization'
-	});
-}
+function addBranch(){
+  
+  vscode.postMessage({
+    command: 'addBranch'
+  });
+}	
+function addOrganization(){
+ 
+ vscode.postMessage({
+   command: 'addOrganization'
+ });	
+}   
 
-const document = vscode.document
-
-const experimentName = document.getElementById("experimentName")
-const org = document.getElementById("organization")
-const branc = document.getElementById("branch")
 
 const submitButton = document.getElementById('submit');
-submitButton.addEventListener('click', clone(experimentName, org, branc));
+submitButton.addEventListener('click', clone);
 
 const addBranchButton = document.getElementById('addBranch');
 addBranchButton.addEventListener('click', addBranch);
