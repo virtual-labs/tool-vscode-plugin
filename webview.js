@@ -1,4 +1,5 @@
 const vscode = acquireVsCodeApi();
+
 function clone() {
   
   const experimentName = document.getElementById("experimentName").value;
@@ -11,6 +12,7 @@ function clone() {
     branch: branch
   });
 }
+
 function addBranch(){
   
   vscode.postMessage({
