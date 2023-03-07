@@ -14,10 +14,32 @@
   ],
   "main": "./extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vlabs-experiment-generator",
+          "title": "Experiment Generator",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "vlabs-experiment-generator": [
+        {
+          "type": "webview",
+          "id": "vlabs.experimentView",
+          "name": "Form Generator"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "virtual-labs-experiment-generator.virtualLabs",
-        "title": "Virtual Labs"
+        "title": "Virtual Labs",
+        "icon": {
+          "light": "images/icon.svg",
+          "dark": "images/icon.svg"
+        }
       }
     ]
   },
