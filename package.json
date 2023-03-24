@@ -12,7 +12,7 @@
   "activationEvents": [
     "onCommand:virtual-labs-experiment-generator.virtualLabs"
   ],
-  "main": "./extension.js",
+  "main": "extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
