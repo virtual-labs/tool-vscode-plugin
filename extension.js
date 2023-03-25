@@ -4,6 +4,7 @@ const vscode = require('vscode');
 const simpleGit = require('simple-git');
 const fs = require('fs');
 const request = require('request');
+const shelljs = require('shelljs');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -37,7 +38,10 @@ function getPanel1Content(scriptUri, styleUri) {
 			<button class="sideButton" id="command3">Run validations and performance measurement</button>
 		</div>
 		<div class="command4">
-			<button class="sideButton" id="command4">Instantiate a web-server</button>
+			<button class="sideButton" id="command4">Deloy an experiment locally</button>
+		</div>
+		<div class="command5">
+			<button class="sideButton" id="command5">Clean the repository</button>
 		</div>
 		</body>
 		<script src="${scriptUri}"></script>
@@ -157,6 +161,70 @@ function cloneWebView() {
 
 
 }
+
+function buildScript(command){
+	// check if the current directory has a package.json file
+	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	const packageJsonPath = path + '/package.json';
+	// from this point on, use shelljs in the directory of the package.json file
+	// locate nodejs binary on the system
+	const nodePath = process.execPath;
+	// set the path of the nodejs binary as the path of the shelljs
+	shelljs.config.execPath = nodePath;
+	shelljs.cd(path);
+	// print the current directory
+	console.log(shelljs.pwd());
+	// dispaly a waiting vscode window
+	vscode.window.withProgress({
+		location: vscode.ProgressLocation.Notification,
+		title: "Please wait while the command is running",
+		cancellable: false
+	}, (progress, token) => {
+		return new Promise((resolve, reject) => {
+			setTimeout(() => {
+				resolve();
+			}, 1000);
+		});
+	});
+	if (!fs.existsSync(packageJsonPath)) {
+		// if not then create one using npm init using shelljs
+		// npm init -y
+		shelljs.exec('npm init -y');
+	}
+	shelljs.exec('npm i @virtual-labs/buildexp');
+	let logs=null
+	switch (command) {
+		case 'command2':
+			vscode.window.showInformationMessage('Running build command, see the logs in the webview');	
+			logs=shelljs.exec('npx @virtual-labs/buildexp build --validateEslint --validateExpdesc --clean');	
+			break;
+		case 'command3':
+			vscode.window.showInformationMessage('Running validate command, see the logs in the webview');
+			logs=shelljs.exec('npx @virtual-labs/buildexp validate --expdesc --eslint');
+			break;
+		case 'command4':
+			vscode.window.showInformationMessage('Running deploy command, see the logs in the webview');
+			logs=shelljs.exec('npx @virtual-labs/buildexp deploy');
+			break;
+		case 'command5':
+			vscode.window.showInformationMessage('Running clean command, see the logs in the webview');
+			logs=shelljs.exec('npx @virtual-labs/buildexp clean');
+			break;
+	}
+	console.log(logs.stdout);
+	// print the logs on vscode webview
+	const panel=vscode.window.createWebviewPanel(
+		'vlabs.buildexp',
+		'Output',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+	// And set its HTML content as the logs	
+	panel.webview.html = logs.stdout;
+
+}
 function activate() {
 	vscode.window.showInformationMessage('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
 
@@ -177,13 +245,16 @@ function activate() {
 					switch (message.command) {
 						// close the webview panel after the user selects the command
 						case 'command1':
+							// check if a directory is open in vscode
+							if (vscode.workspace.workspaceFolders == null) {
+								vscode.window.showErrorMessage("Please open a directory in vscode");
+								break;
+							}
 							cloneWebView();
 							break;
-						case 'command2':
-							break;
-						case 'command3':
-							break;
-						case 'command4':
+						// in all other cases, build the script
+						default:
+							buildScript(message.command);
 							break;
 					}
 				}
