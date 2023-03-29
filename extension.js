@@ -32,13 +32,13 @@ function getPanel1Content(scriptUri, styleUri) {
 			<button class="sideButton" id="command1">Clone the experiment repository</button>
 		</div>
 		<div class="command2">
-			<button class="sideButton" id="command2">Build the experiment on the local machine</button>
+			<button class="sideButton" id="command2">Run validations </button>
 		</div>
 		<div class="command3">
-			<button class="sideButton" id="command3">Run validations and performance measurement</button>
+			<button class="sideButton" id="command3">Build the experiment on the local machine</button>
 		</div>
 		<div class="command4">
-			<button class="sideButton" id="command4">Deloy an experiment locally</button>
+			<button class="sideButton" id="command4">Deploy the experiment locally</button>
 		</div>
 		<div class="command5">
 			<button class="sideButton" id="command5">Clean the repository</button>
@@ -74,7 +74,7 @@ function cloneWebView() {
 				const organization = message.organization;
 				const link = 'https://github.com/' + organization + '/' + experimentName + '.git';
 				const git = simpleGit();
-				const options = ['--depth', '1', '--branch', branch];
+				// const options = ['--depth', '1'];
 				const path = vscode.workspace.workspaceFolders[0].uri.fsPath + '/' + experimentName;
 				// check if the experiment is already cloned
 				if (fs.existsSync(path)) {
@@ -82,7 +82,27 @@ function cloneWebView() {
 					panel.dispose();
 					break;
 				}
-				git.clone(link, path, options, handlerFn);
+				git.clone(link, path, (err) => {
+					if (err) {
+						vscode.window.showErrorMessage("Error cloning repository: " + err);
+						panel.dispose();
+					} else {
+						// checkout the branch to dev 
+						git.cwd(path);
+						git.checkout(branch, (err) => {
+							if (err) {
+								vscode.window.showErrorMessage("Error checking out branch: " + err);
+							} else {
+								panel.dispose();
+								vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(path)).then(() => {
+									vscode.window.showInformationMessage("Experiment Repository cloned successfully and branch checked out");
+								});
+							}
+						});
+						
+					}
+				});
+				
 				panel.dispose();
 				break;
 			case 'addBranch':
@@ -162,7 +182,7 @@ function cloneWebView() {
 
 }
 
-function buildScript(command){
+function buildScript(command) {
 	// check if the current directory has a package.json file
 	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
 	const packageJsonPath = path + '/package.json';
@@ -192,30 +212,41 @@ function buildScript(command){
 		shelljs.exec('npm init -y');
 	}
 	shelljs.exec('npm i @virtual-labs/buildexp');
-	let logs=null
+	let logs = null
+	let panelTitle = ""
 	switch (command) {
 		case 'command2':
-			vscode.window.showInformationMessage('Running build command, see the logs in the webview');	
-			logs=shelljs.exec('npx @virtual-labs/buildexp build --validateEslint --validateExpdesc --clean');	
+			vscode.window.showInformationMessage('Running validate command, you can see the logs in the window');
+			logs = shelljs.exec('npx @virtual-labs/buildexp validate --expdesc --eslint');
+			panelTitle = "Validation Logs"
 			break;
+
 		case 'command3':
-			vscode.window.showInformationMessage('Running validate command, see the logs in the webview');
-			logs=shelljs.exec('npx @virtual-labs/buildexp validate --expdesc --eslint');
+			vscode.window.showInformationMessage('Running build command, you can see the logs in the window');
+			logs = shelljs.exec('npx @virtual-labs/buildexp build --validateEslint --validateExpdesc --clean');
+			panelTitle = "Build Logs"
 			break;
 		case 'command4':
-			vscode.window.showInformationMessage('Running deploy command, see the logs in the webview');
-			logs=shelljs.exec('npx @virtual-labs/buildexp deploy');
+			// check if the build directory exists
+			const buildPath = path + '/build';
+			if (!fs.existsSync(buildPath)) {
+				vscode.window.showErrorMessage('Build directory does not exist, please run the build command first');
+				return;
+			}
+			vscode.window.showInformationMessage('Running deploy command, you can see the logs in the window');
+			logs = shelljs.exec('npx @virtual-labs/buildexp deploy');
+			panelTitle = "Deploy Logs"
 			break;
 		case 'command5':
-			vscode.window.showInformationMessage('Running clean command, see the logs in the webview');
-			logs=shelljs.exec('npx @virtual-labs/buildexp clean');
-			break;
+			vscode.window.showInformationMessage('Cleaning the build directory');
+			logs = shelljs.exec('npx @virtual-labs/buildexp clean');
+			panelTitle = "Clean Logs"
+			return;
 	}
-	console.log(logs.stdout);
-	// print the logs on vscode webview
-	const panel=vscode.window.createWebviewPanel(
+
+	const panel = vscode.window.createWebviewPanel(
 		'vlabs.buildexp',
-		'Output',
+		panelTitle,
 		vscode.ViewColumn.One,
 		{
 			enableScripts: true
@@ -223,7 +254,6 @@ function buildScript(command){
 	);
 	// And set its HTML content as the logs	
 	panel.webview.html = logs.stdout;
-
 }
 function activate() {
 	vscode.window.showInformationMessage('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
@@ -297,7 +327,7 @@ function getWebviewContent(scriptUri, styleUri) {
 				<button class="smallButton"  id="addOrganization">Add Organization</button>
 			</div>
 			<div class="Experiment">
-				<label for="experimentName">Experiment Name</label>
+				<label for="experimentName">Experiment Repository Name</label>
 				<div class="Name">
 					<input type="text" id="experimentName" name="experimentName">
 				</div>
