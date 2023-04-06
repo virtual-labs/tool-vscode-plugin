@@ -216,14 +216,14 @@ function buildScript(command) {
 	let panelTitle = ""
 	switch (command) {
 		case 'command2':
-			vscode.window.showInformationMessage('Running validate command, you can see the logs in the window');
 			logs = shelljs.exec('npx @virtual-labs/buildexp validate --expdesc --eslint');
 			panelTitle = "Validation Logs"
+			vscode.window.showInformationMessage('Validation successful, you can see the logs in the window');
 			break;
 
 		case 'command3':
-			vscode.window.showInformationMessage('Running build command, you can see the logs in the window');
 			logs = shelljs.exec('npx @virtual-labs/buildexp build --validateEslint --validateExpdesc --clean');
+			vscode.window.showInformationMessage('Build successful, you can see the logs in the window');
 			panelTitle = "Build Logs"
 			break;
 		case 'command4':
@@ -233,13 +233,13 @@ function buildScript(command) {
 				vscode.window.showErrorMessage('Build directory does not exist, please run the build command first');
 				return;
 			}
-			vscode.window.showInformationMessage('Running deploy command, you can see the logs in the window');
 			logs = shelljs.exec('npx @virtual-labs/buildexp deploy');
+			vscode.window.showInformationMessage('Deployed successfully, you can see the logs in the window');
 			panelTitle = "Deploy Logs"
 			break;
 		case 'command5':
-			vscode.window.showInformationMessage('Cleaning the build directory');
 			logs = shelljs.exec('npx @virtual-labs/buildexp clean');
+			vscode.window.showInformationMessage('Cleaned the build directory');
 			panelTitle = "Clean Logs"
 			return;
 	}
