@@ -5,6 +5,7 @@ const simpleGit = require('simple-git');
 const fs = require('fs');
 const request = require('request');
 const shelljs = require('shelljs');
+const { execSync } = require('child_process');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -42,6 +43,12 @@ function getPanel1Content(scriptUri, styleUri) {
 		</div>
 		<div class="command5">
 			<button class="sideButton" id="command5">Clean the repository</button>
+		</div>
+		<div class="command6">
+			<button class="sideButton" id="command6">Push changes to github</button>
+		</div>
+		<div class="command7">
+			<button class="sideButton" id="command7">Merge to testing branch</button>
 		</div>
 		</body>
 		<script src="${scriptUri}"></script>
@@ -86,12 +93,14 @@ function cloneWebView() {
 					if (err) {
 						vscode.window.showErrorMessage("Error cloning repository: " + err);
 						panel.dispose();
+						return
 					} else {
 						// checkout the branch to dev 
 						git.cwd(path);
 						git.checkout(branch, (err) => {
 							if (err) {
 								vscode.window.showErrorMessage("Error checking out branch: " + err);
+								return
 							} else {
 								panel.dispose();
 								vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(path)).then(() => {
@@ -99,10 +108,10 @@ function cloneWebView() {
 								});
 							}
 						});
-						
+
 					}
 				});
-				
+
 				panel.dispose();
 				break;
 			case 'addBranch':
@@ -211,18 +220,18 @@ function buildScript(command) {
 		// npm init -y
 		shelljs.exec('npm init -y');
 	}
-	shelljs.exec('npm i @virtual-labs/buildexp');
+	shelljs.exec('npm i vlabs-buildexp@latest');
 	let logs = null
 	let panelTitle = ""
 	switch (command) {
 		case 'command2':
-			logs = shelljs.exec('npx @virtual-labs/buildexp validate --expdesc --eslint');
+			logs = shelljs.exec('npx vlabs-buildexp validate --expdesc --eslint');
 			panelTitle = "Validation Logs"
 			vscode.window.showInformationMessage('Validation successful, you can see the logs in the window');
 			break;
 
 		case 'command3':
-			logs = shelljs.exec('npx @virtual-labs/buildexp build --validateEslint --validateExpdesc --clean');
+			logs = shelljs.exec('npx vlabs-buildexp build --validateEslint --validateExpdesc --clean');
 			vscode.window.showInformationMessage('Build successful, you can see the logs in the window');
 			panelTitle = "Build Logs"
 			break;
@@ -233,15 +242,19 @@ function buildScript(command) {
 				vscode.window.showErrorMessage('Build directory does not exist, please run the build command first');
 				return;
 			}
-			logs = shelljs.exec('npx @virtual-labs/buildexp deploy');
+
+			// use execSync to get the output of the command and execute it in the terminal
+			logs = execSync('npx vlabs-buildexp deploy', { stdio: 'inherit' });
+
+			// logs = shelljs.exec('npx vlabs-buildexp deploy');
 			vscode.window.showInformationMessage('Deployed successfully, you can see the logs in the window');
-			panelTitle = "Deploy Logs"
+			// panelTitle = "Deploy Logs"
 			break;
 		case 'command5':
-			logs = shelljs.exec('npx @virtual-labs/buildexp clean');
+			logs = shelljs.exec('npx vlabs-buildexp clean');
 			vscode.window.showInformationMessage('Cleaned the build directory');
 			panelTitle = "Clean Logs"
-			return;
+			break;
 	}
 
 	const panel = vscode.window.createWebviewPanel(
@@ -253,7 +266,72 @@ function buildScript(command) {
 		}
 	);
 	// And set its HTML content as the logs	
-	panel.webview.html = logs.stdout;
+	// pretty print the logs.stdout
+	const logsContent = `<pre>${logs.stdout}</pre>`;
+
+	panel.webview.html = logsContent;
+}
+function pushAndMerge(command) {
+	console.log(command);
+	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	const nodePath = process.execPath;
+	// set the path of the nodejs binary as the path of the shelljs
+	shelljs.config.execPath = nodePath;
+	shelljs.cd(path);
+
+	if (command == 'command6') {
+		// push the changes to the remote repository
+		// use execSync to get the output of the command and execute it in the terminal
+		// do add, commit and push after fetching the branch name 
+		console.log('pushing to github');
+		// check if the repo is a git repo
+		// if not then throw an error
+		if (shelljs.exec('git rev-parse --is-inside-work-tree').code !== 0) {
+			vscode.window.showErrorMessage('Sorry, this is not a git repository');
+			return;
+		}
+		// run git config --list to get all the config variables
+		let logs = shelljs.exec('git config --list');
+		console.log(logs);
+		simpleGit().add('./*')
+			.commit('uploaded files')
+			.addRemote('origin', 'https://github.com/gautamxyz/testing.git')
+
+		// do push using async await
+		// do push using async await
+		async function push() {
+			try {
+				await simpleGit().push('origin', 'main', {
+					'--set-upstream': null,
+					username: 'gautamxyz'
+				});
+				vscode.window.showInformationMessage('Pushed successfully');
+			} catch (err) {
+				console.log(err);
+			}
+		}
+
+		push();
+
+		// simpleGit()
+		// 	.init()
+		// 	.add('./*')
+		// 	.commit('uploaded files')
+		// 	.addRemote('origin', 'https://github.com/gautamxyz/testing.git')
+		// 	.push('origin', 'main', function (err) {
+		// 		if (err) throw err;
+		// 		else {
+		// 			console.log('pushed');
+		// 			vscode.window.showInformationMessage('Pushed successfully');
+		// 		}
+		// 	});
+
+	}
+	else if (command == 'command7') {
+		// merge the changes to the master branch
+		// use execSync to get the output of the command and execute it in the terminal
+
+	}
 }
 function activate() {
 	vscode.window.showInformationMessage('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
@@ -283,6 +361,10 @@ function activate() {
 							cloneWebView();
 							break;
 						// in all other cases, build the script
+						case 'command6':
+						case 'command7':
+							pushAndMerge(message.command);
+							break;
 						default:
 							buildScript(message.command);
 							break;
