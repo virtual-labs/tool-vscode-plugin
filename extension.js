@@ -191,6 +191,93 @@ function cloneWebView() {
 
 }
 
+// function runCommand(command) {
+// 	return new Promise((resolve, reject) => {
+// 	  const childProcess = shelljs.exec(command, { async: true }, (code, stdout, stderr) => {
+// 		if (code === 0) {
+// 		  resolve();
+// 		} else {
+// 			reject(new Error(stderr));
+// 		}
+// 		});
+// 	});
+	
+// }
+
+// async function runCommandWithProgress(command) {
+// 	console.log('Running command: ' + command)
+// 	await vscode.window.withProgress({
+// 	  location: vscode.ProgressLocation.Notification,
+// 	  title: 'Running command...',
+// 	  cancellable: true,
+// 	}, async (progress, token) => {
+// 	  // Run the command
+// 	  try {
+// 		await runCommand(command);
+// 	  } catch (error) {
+// 		vscode.window.showErrorMessage(error.message);
+// 		throw error;
+// 	  }
+// 	});
+// }
+
+
+// async function runCommandWithProgress(command){
+// 	return vscode.window.withProgress({
+// 	  location: vscode.ProgressLocation.Notification,
+// 	  title: 'Running command...',
+// 	  cancellable: true,
+// 	}, async (progress, token) => {
+// 	  return new Promise((resolve, reject) => {
+// 		const child = shelljs.exec(command, { async: true }, (code, stdout, stderr) => {
+// 		  if (code === 0) {
+// 			resolve();
+// 		  } else {
+// 			reject(new Error(`Command '${command}' failed with exit code ${code}.`));
+// 		  }
+// 		});
+
+// 		// child.stdout?.on('data', (data) => {
+// 		//   console.log(data.toString());
+// 		// });
+// 		token.onCancellationRequested(() => {
+// 		  child.kill();
+// 		  vscode.window.showWarningMessage(`Command '${command}' was cancelled by the user.`);
+// 		  reject(new Error(`Command '${command}' was cancelled by the user.`));
+// 		});
+// 	  });
+// 	});
+//   }
+
+async function runCommandWithProgress(command,object) {
+	return vscode.window.withProgress({ 
+		location: vscode.ProgressLocation.Notification,
+		title: 'Deploying...',
+		cancellable: true,
+	}, async (progress, token) => {
+		return new Promise((resolve, reject) => {
+			const child = shelljs.exec(command, { async: true }, (code, stdout, stderr) => {
+				if (code === 0) {
+					resolve();
+					stdout.on('data', (data) => {
+						object.logs2 = data.toString();
+						console.log(data.toString());
+					});
+				} else {
+					reject(new Error(`Command '${command}' failed with exit code ${code}.`));
+				}
+			});
+			// object.logs2 = child;
+			token.onCancellationRequested(() => {
+				child.kill();
+				vscode.window.showInformationMessage(`Deploying cancelled by the user.`);
+				// reject(new Error(`Command '${command}' was cancelled by the user.`));
+			});
+		});
+	});
+}
+
+
 function buildScript(command) {
 	// check if the current directory has a package.json file
 	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
@@ -207,7 +294,7 @@ function buildScript(command) {
 	vscode.window.withProgress({
 		location: vscode.ProgressLocation.Notification,
 		title: "Please wait while the command is running",
-		cancellable: false
+		cancellable: false,
 	}, (progress, token) => {
 		return new Promise((resolve, reject) => {
 			setTimeout(() => {
@@ -221,11 +308,16 @@ function buildScript(command) {
 		shelljs.exec('npm init -y');
 	}
 	shelljs.exec('npm i vlabs-buildexp@latest');
+	
 	let logs = null
 	let panelTitle = ""
 	switch (command) {
 		case 'command2':
 			logs = shelljs.exec('npx vlabs-buildexp validate --expdesc --eslint');
+			// console.log("hi")
+			// console.log(logs)
+			// console.log("hi")
+			// console.log(logs.stdout)
 			panelTitle = "Validation Logs"
 			vscode.window.showInformationMessage('Validation successful, you can see the logs in the window');
 			break;
@@ -244,11 +336,48 @@ function buildScript(command) {
 			}
 
 			// use execSync to get the output of the command and execute it in the terminal
-			logs = execSync('npx vlabs-buildexp deploy', { stdio: 'inherit' });
+			// logs = execSync('npx vlabs-buildexp deploy', { stdio: 'inherit' });
+			// runCommandWithProgress('npx vlabs-buildexp deploy').then(() => {
+				// 	vscode.window.showInformationMessage('Deploy successful, you can see the logs in the window');
+				// }).catch((error) => {
+					// 	vscode.window.showErrorMessage(error.message);
+					// });
+
+			let myObject = { logs2: null };
+			runCommandWithProgress('npx vlabs-buildexp deploy',myObject);
+			logs = myObject.logs2;
+			// console.log("hi");
+			// console.log(logs);
+			// console.log("hi");
+			// console.log(myObject.logs2);
+			// console.log("hi");
+			// console.log(logs.stdout);
+
+			// vscode.window.withProgress({ 
+			// 	location: vscode.ProgressLocation.Notification,
+			// 	title: 'Deploying...',
+			// 	cancellable: true,
+			// }, async (progress, token) => {
+			// 	return new Promise((resolve, reject) => {
+			// 		const child = shelljs.exec(command, { async: true }, (code, stdout, stderr) => {
+			// 			if (code === 0) {
+			// 				resolve();
+			// 			} else {
+			// 				reject(new Error(`Command '${command}' failed with exit code ${code}.`));
+			// 			}
+			// 		});
+			// 		logs = child
+			// 		token.onCancellationRequested(() => {
+			// 			child.kill();
+			// 			vscode.window.showInformationMessage(`Deployed successfully`);
+			// 			// reject(new Error(`Command '${command}' was cancelled by the user.`));
+			// 		});
+			// 	});
+			// });
+
 
 			// logs = shelljs.exec('npx vlabs-buildexp deploy');
-			vscode.window.showInformationMessage('Deployed successfully, you can see the logs in the window');
-			// panelTitle = "Deploy Logs"
+			// vscode.window.showInformationMessage('Deployed successfully, you can see the logs in the window');
 			break;
 		case 'command5':
 			logs = shelljs.exec('npx vlabs-buildexp clean');
@@ -268,7 +397,8 @@ function buildScript(command) {
 	// And set its HTML content as the logs	
 	// pretty print the logs.stdout
 	const logsContent = `<pre>${logs.stdout}</pre>`;
-
+	console.log("hi")
+	console.log(logsContent);
 	panel.webview.html = logsContent;
 }
 function pushAndMerge(command) {
