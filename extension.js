@@ -401,7 +401,7 @@ function buildScript(command) {
 	console.log(logsContent);
 	panel.webview.html = logsContent;
 }
-function pushAndMerge(command) {
+async function pushAndMerge(command) {
 	console.log(command);
 	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
 	const nodePath = process.execPath;
@@ -423,17 +423,23 @@ function pushAndMerge(command) {
 		// run git config --list to get all the config variables
 		let logs = shelljs.exec('git config --list');
 		console.log(logs);
-		simpleGit().add('./*')
-			.commit('uploaded files')
-			.addRemote('origin', 'https://github.com/gautamxyz/testing.git')
+		const repo = 'https://github.com/raj-vlabs/simple-git-sample.git'
+		const user = 'raj-vlabs'
+		const token = ''
+		const remote = repo.replace("://", `://${user}:${token}@`)
+		const git = simpleGit()
+		git.add('./*')
+			.commit('uploaded some more files')
+			.addRemote('origin', remote)
 
+		await git.push(remote, 'main')
 		// do push using async await
 		// do push using async await
 		async function push() {
 			try {
 				await simpleGit().push('origin', 'main', {
-					'--set-upstream': null,
-					username: 'gautamxyz'
+					// '--set-upstream': null,
+					// username: 'gautamxyz'
 				});
 				vscode.window.showInformationMessage('Pushed successfully');
 			} catch (err) {
@@ -441,7 +447,7 @@ function pushAndMerge(command) {
 			}
 		}
 
-		push();
+		// push();
 
 		// simpleGit()
 		// 	.init()
@@ -479,7 +485,7 @@ function activate() {
 				const scriptUri = view.webview.asWebviewUri(vscode.Uri.file(__dirname + '/sidebar.js'));
 				const styleUri = view.webview.asWebviewUri(vscode.Uri.file(__dirname + '/sidebar.css'));
 				view.webview.html = getPanel1Content(scriptUri, styleUri);
-				view.webview.onDidReceiveMessage((message) => {
+				view.webview.onDidReceiveMessage(async (message) => {
 					switch (message.command) {
 						// close the webview panel after the user selects the command
 						case 'command1':
@@ -493,7 +499,7 @@ function activate() {
 						// in all other cases, build the script
 						case 'command6':
 						case 'command7':
-							pushAndMerge(message.command);
+							await pushAndMerge(message.command);
 							break;
 						default:
 							buildScript(message.command);
