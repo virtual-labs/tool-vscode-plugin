@@ -397,8 +397,7 @@ function buildScript(command) {
 	// And set its HTML content as the logs	
 	// pretty print the logs.stdout
 	const logsContent = `<pre>${logs.stdout}</pre>`;
-	console.log("hi")
-	console.log(logsContent);
+	
 	panel.webview.html = logsContent;
 }
 async function pushAndMerge(command) {
@@ -423,44 +422,53 @@ async function pushAndMerge(command) {
 		// run git config --list to get all the config variables
 		let logs = shelljs.exec('git config --list');
 		console.log(logs);
-		const repo = 'https://github.com/raj-vlabs/simple-git-sample.git'
-		const user = 'raj-vlabs'
-		const token = ''
-		const remote = repo.replace("://", `://${user}:${token}@`)
-		const git = simpleGit()
-		git.add('./*')
-			.commit('uploaded some more files')
-			.addRemote('origin', remote)
-
-		await git.push(remote, 'main')
-		// do push using async await
-		// do push using async await
-		async function push() {
-			try {
-				await simpleGit().push('origin', 'main', {
-					// '--set-upstream': null,
-					// username: 'gautamxyz'
-				});
-				vscode.window.showInformationMessage('Pushed successfully');
-			} catch (err) {
-				console.log(err);
+		// create a webview panel
+		const panel = vscode.window.createWebviewPanel(
+			'vlabs.buildexp',
+			'User Details',
+			vscode.ViewColumn.One,
+			{
+				enableScripts: true
 			}
-		}
+		);
+		const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/push.js'));
+		console.log(scriptUri);
+		const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
 
-		// push();
+		panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 
-		// simpleGit()
-		// 	.init()
-		// 	.add('./*')
-		// 	.commit('uploaded files')
-		// 	.addRemote('origin', 'https://github.com/gautamxyz/testing.git')
-		// 	.push('origin', 'main', function (err) {
-		// 		if (err) throw err;
-		// 		else {
-		// 			console.log('pushed');
-		// 			vscode.window.showInformationMessage('Pushed successfully');
-		// 		}
-		// 	});
+		const repo = 'https://github.com/virtual-labs/repo.git'
+		let remote=""
+		let commitMessage=""
+		panel.webview.onDidReceiveMessage(message => {
+			switch (message.command) {
+				case 'push':			
+					const userName = message.userName;
+					const personalAccessToken = message.personalAccessToken;
+					commitMessage = message.commitMessage;
+					// remote = repo.replace("://", `://${userName}:${personalAccessToken}@`)	
+					remote=repo.replace("https://","https://"+userName+":"+personalAccessToken+"@")
+					// extract the current directory name
+					const currentDir = path.split('/').pop();
+					remote = remote.replace("repo", currentDir);
+					const git = simpleGit();
+					git.add('./*')
+						.commit(commitMessage)
+						.addRemote('origin', remote)
+					git.push(remote, 'dev', function (err) {
+						if (err) {
+							vscode.window.showErrorMessage(err);
+						}
+						else {
+							vscode.window.showInformationMessage('Pushed successfully');
+						}
+					});
+
+					// vscode.window.showInformationMessage('Pushed successfully');
+				
+					break;
+			}
+		}, undefined, context.subscriptions);
 
 	}
 	else if (command == 'command7') {
@@ -514,6 +522,46 @@ function activate() {
 
 }
 
+function getWebviewFormContent(scriptUri, styleUri) {
+	return `
+	<!DOCTYPE html>
+		<html lang="en">
+
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Virtual Labs Experiment Generator</title>
+			<link rel="stylesheet" href="${styleUri}">
+		</head>
+
+		<body>
+			<h1>Virtual Labs Experiment Generator</h1>
+			<div class="Organization">
+				<label for="userName">Github User Name</label>
+				<div class="Name">
+					<input type="text" id="userName" name="userName">
+				</div>
+				
+			</div>
+			<div class="Experiment">
+				<label for="personalAccessToken">Personal Access Token</label>
+				<div class="Name">
+					<input type="text" id="personalAccessToken" name="personalAccessToken">
+				</div>
+			</div>
+			<div class="Branch">
+				<label for="commitMessage">Commit Message</label>
+				<div class="Name">
+					<input type="text" id="commitMessage" name="commitMessage">
+				</div>
+			</div>
+			<button id="push" class="bigButton">Push</button>
+			
+			<script  src="${scriptUri}"></script>
+		</body>
+
+		</html>`
+}
 
 function getWebviewContent(scriptUri, styleUri) {
 
