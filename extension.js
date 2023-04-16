@@ -5,20 +5,11 @@ const simpleGit = require('simple-git');
 const fs = require('fs');
 const request = require('request');
 const shelljs = require('shelljs');
-const { execSync } = require('child_process');
 
 /**
  * @param {vscode.ExtensionContext} context
  */
-function handlerFn(err) {
-	if (err) {
-		console.log(err);
-		vscode.window.showErrorMessage("Error while cloning the repository");
-	}
-	else {
-		vscode.window.showInformationMessage("Repository cloned successfully");
-	}
-}
+
 function getPanel1Content(scriptUri, styleUri) {
 	return `	<!DOCTYPE html>
 		<html lang="en">
@@ -45,7 +36,7 @@ function getPanel1Content(scriptUri, styleUri) {
 			<button class="sideButton" id="command5">Clean the repository</button>
 		</div>
 		<div class="command6">
-			<button class="sideButton" id="command6">Push changes to github</button>
+			<button class="sideButton" id="command6">Push and merge</button>
 		</div>
 		</body>
 		<script src="${scriptUri}"></script>
@@ -366,26 +357,21 @@ async function pushAndMerge() {
 						vscode.window.showErrorMessage(err);
 					}
 					else {
-						// vscode.window.showInformationMessage('Pushed successfully');
-
-						git.checkout('testing', function (err) {
+						// merge the dev branch to the testing branch
+						git.fetch(remote, 'testing', function (err) {
 							if (err) {
 								vscode.window.showErrorMessage(err);
 							}
 							else {
-								git.listRemote(['--heads', remote], function (err, remoteRefs) {
+								git.checkout('testing', function (err) {
 									if (err) {
-										console.log("error1:"+err);
 										vscode.window.showErrorMessage(err);
-									} else if (!remoteRefs.includes('refs/heads/dev')) {
-										console.log("error2:"+err);
-
-										vscode.window.showErrorMessage('The dev branch does not exist in the remote repository.');
-									} else {
+									}
+									else {
 										git.mergeFromTo('dev', 'testing', function (err, mergeSummary) {
 											// rest of the code
 											if (err) {
-												console.log(err);
+												vscode.window.showErrorMessage(err);
 											}
 											else {
 												git.push(remote, 'testing', function (err) {
@@ -393,45 +379,15 @@ async function pushAndMerge() {
 														vscode.window.showErrorMessage(err);
 													}
 													else {
-														vscode.window.showInformationMessage('Pushed successfully');
+														vscode.window.showInformationMessage('Pushed and merged successfully');
 													}
 												});
 											}
 										});
 									}
-								});
+								})
 							}
-						});
-						// checkout to the testing branch
-						// git.fetch(remote, 'testing', function (err) {
-						// 	if (err) {
-						// 		vscode.window.showErrorMessage(err);
-						// 	}
-						// 	else {
-						// 		git.checkout('testing', function (err) {
-						// 			if (err) {
-						// 				vscode.window.showErrorMessage(err);
-						// 			}
-						// 			else {
-						// 				git.mergeFromTo(remote,'dev', function (err) {
-						// 					if (err) {
-						// 						vscode.window.showErrorMessage(err);
-						// 					}
-						// 					else {
-						// 						git.push(remote, 'testing', function (err) {
-						// 							if (err) {
-						// 								vscode.window.showErrorMessage(err);
-						// 							}
-						// 							else {
-						// 								vscode.window.showInformationMessage('Merged successfully');
-						// 							}
-						// 						});
-						// 					}
-						// 				});
-						// 			}
-						// 		});
-						// 	}
-						// });
+						})
 					}
 				});
 				break;
@@ -443,8 +399,7 @@ function activate() {
 	vscode.window.showInformationMessage('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
 
 	console.log('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
-	let panel1 = null;
-	panel1 = vscode.window.registerWebviewViewProvider(
+	vscode.window.registerWebviewViewProvider(
 		'vlabs.experimentView', // Identifies the type of the webview. Used internally
 
 		{
