@@ -47,9 +47,6 @@ function getPanel1Content(scriptUri, styleUri) {
 		<div class="command6">
 			<button class="sideButton" id="command6">Push changes to github</button>
 		</div>
-		<div class="command7">
-			<button class="sideButton" id="command7">Merge to testing branch</button>
-		</div>
 		</body>
 		<script src="${scriptUri}"></script>
 		</html>
@@ -192,51 +189,51 @@ function cloneWebView() {
 
 async function runCommandWithProgress(command, object) {
 	return vscode.window.withProgress(
-	  {
-		location: vscode.ProgressLocation.Notification,
-		title: "Deploying...",
-		cancellable: true,
-	  },
-	  async (progress, token) => {
-		  return new Promise((resolve, reject) => {
-			  const child = shelljs.exec(command, { async: true }, (code, stdout, stderr) => {
-				  if (code === 0) {
-					  resolve();
+		{
+			location: vscode.ProgressLocation.Notification,
+			title: "Deploying...",
+			cancellable: true,
+		},
+		async (progress, token) => {
+			return new Promise((resolve, reject) => {
+				const child = shelljs.exec(command, { async: true }, (code, stdout, stderr) => {
+					if (code === 0) {
+						resolve();
 					} else {
 						reject(new Error(`Command '${command}' failed with exit code ${code}.`));
 					}
 				});
-			const panel = vscode.window.createWebviewPanel(
-				'vlabs.buildexp',
-				'Deploy logs',
-				vscode.ViewColumn.One,
-				{
-					enableScripts: true
-				}
-			);
-			let localData = "";
-		  	child.stdout.on("data", (data) => {
-				// vscode.window.showInformationMessage(`child entered`);
-				// And set its HTML content as the logs	
-				// pretty print the logs.stdout
-				const logsContent = `<pre>${data.toString()}</pre>`;
-				localData += logsContent;
-				// append the logs to the webview
-				panel.webview.html = localData;
-		  	});
+				const panel = vscode.window.createWebviewPanel(
+					'vlabs.buildexp',
+					'Deploy logs',
+					vscode.ViewColumn.One,
+					{
+						enableScripts: true
+					}
+				);
+				let localData = "";
+				child.stdout.on("data", (data) => {
+					// vscode.window.showInformationMessage(`child entered`);
+					// And set its HTML content as the logs	
+					// pretty print the logs.stdout
+					const logsContent = `<pre>${data.toString()}</pre>`;
+					localData += logsContent;
+					// append the logs to the webview
+					panel.webview.html = localData;
+				});
 
-		  token.onCancellationRequested(() => {
-			// vscode.window.showInformationMessage(`child exited`);
-			child.kill();
-			vscode.window.showInformationMessage(`Deploying cancelled by the user.`);
-			// reject(new Error(`Command '${command}' was cancelled by the user.`));
-		  });
-		});
-	  }
+				token.onCancellationRequested(() => {
+					// vscode.window.showInformationMessage(`child exited`);
+					child.kill();
+					vscode.window.showInformationMessage(`Deploying cancelled by the user.`);
+					// reject(new Error(`Command '${command}' was cancelled by the user.`));
+				});
+			});
+		}
 	);
-  }
-  
-async function runCommand(command,myObject) {
+}
+
+async function runCommand(command, myObject) {
 	await runCommandWithProgress(command, myObject);
 }
 
@@ -271,7 +268,7 @@ function buildScript(command) {
 		shelljs.exec('npm init -y');
 	}
 	shelljs.exec('npm i vlabs-buildexp@latest');
-	
+
 	let logs = null
 	let panelTitle = ""
 	switch (command) {
@@ -294,7 +291,7 @@ function buildScript(command) {
 				return;
 			}
 			let myObject = { logs2: null };
-			runCommand('npx vlabs-buildexp deploy',myObject)
+			runCommand('npx vlabs-buildexp deploy', myObject)
 			break;
 		case 'command5':
 			logs = shelljs.exec('npx vlabs-buildexp clean');
@@ -302,7 +299,7 @@ function buildScript(command) {
 			panelTitle = "Clean Logs"
 			break;
 	}
-	
+
 	if (command == 'command4') { return; }
 	const panel = vscode.window.createWebviewPanel(
 		'vlabs.buildexp',
@@ -317,82 +314,130 @@ function buildScript(command) {
 	const logsContent = `<pre>${logs.stdout}</pre>`;
 	panel.webview.html = logsContent;
 }
-async function pushAndMerge(command) {
-	console.log(command);
+async function pushAndMerge() {
+
 	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
 	const nodePath = process.execPath;
 	// set the path of the nodejs binary as the path of the shelljs
 	shelljs.config.execPath = nodePath;
 	shelljs.cd(path);
 
-	if (command == 'command6') {
-		// push the changes to the remote repository
-		// use execSync to get the output of the command and execute it in the terminal
-		// do add, commit and push after fetching the branch name 
-		console.log('pushing to github');
-		// check if the repo is a git repo
-		// if not then throw an error
-		if (shelljs.exec('git rev-parse --is-inside-work-tree').code !== 0) {
-			vscode.window.showErrorMessage('Sorry, this is not a git repository');
-			return;
+
+	if (shelljs.exec('git rev-parse --is-inside-work-tree').code !== 0) {
+		vscode.window.showErrorMessage('Sorry, this is not a git repository');
+		return;
+	}
+	// run git config --list to get all the config variables
+
+	// create a webview panel
+	const panel = vscode.window.createWebviewPanel(
+		'vlabs.buildexp',
+		'User Details',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
 		}
-		// run git config --list to get all the config variables
-		let logs = shelljs.exec('git config --list');
-		console.log(logs);
-		// create a webview panel
-		const panel = vscode.window.createWebviewPanel(
-			'vlabs.buildexp',
-			'User Details',
-			vscode.ViewColumn.One,
-			{
-				enableScripts: true
-			}
-		);
-		const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/push.js'));
-		console.log(scriptUri);
-		const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
+	);
+	const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/push.js'));
+	const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
 
-		panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
+	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 
-		const repo = 'https://github.com/virtual-labs/repo.git'
-		let remote=""
-		let commitMessage=""
-		panel.webview.onDidReceiveMessage(message => {
-			switch (message.command) {
-				case 'push':			
-					const userName = message.userName;
-					const personalAccessToken = message.personalAccessToken;
-					commitMessage = message.commitMessage;
-					// remote = repo.replace("://", `://${userName}:${personalAccessToken}@`)	
-					remote=repo.replace("https://","https://"+userName+":"+personalAccessToken+"@")
-					// extract the current directory name
-					const currentDir = path.split('/').pop();
-					remote = remote.replace("repo", currentDir);
-					const git = simpleGit();
-					git.add('./*')
-						.commit(commitMessage)
-						.addRemote('origin', remote)
-					git.push(remote, 'dev', function (err) {
-						if (err) {
-							vscode.window.showErrorMessage(err);
-						}
-						else {
-							vscode.window.showInformationMessage('Pushed successfully');
-						}
-					});
+	const repo = 'https://github.com/gautamxyz/repo.git'
+	let remote = ""
+	let commitMessage = ""
+	panel.webview.onDidReceiveMessage(message => {
+		switch (message.command) {
+			case 'push':
+				const userName = message.userName;
+				const personalAccessToken = message.personalAccessToken;
+				commitMessage = message.commitMessage;
+				// remote = repo.replace("://", `://${userName}:${personalAccessToken}@`)	
+				remote = repo.replace("https://", "https://" + userName + ":" + personalAccessToken + "@")
+				// extract the current directory name
+				const currentDir = path.split('/').pop();
+				remote = remote.replace("repo", currentDir);
+				const git = simpleGit();
+				git.add('./*')
+					.commit(commitMessage)
+					.addRemote('origin', remote)
+				git.push(remote, 'dev', function (err) {
+					if (err) {
+						vscode.window.showErrorMessage(err);
+					}
+					else {
+						// vscode.window.showInformationMessage('Pushed successfully');
 
-					// vscode.window.showInformationMessage('Pushed successfully');
-				
-					break;
-			}
-		}, undefined, context.subscriptions);
+						git.checkout('testing', function (err) {
+							if (err) {
+								vscode.window.showErrorMessage(err);
+							}
+							else {
+								git.listRemote(['--heads', remote], function (err, remoteRefs) {
+									if (err) {
+										console.log("error1:"+err);
+										vscode.window.showErrorMessage(err);
+									} else if (!remoteRefs.includes('refs/heads/dev')) {
+										console.log("error2:"+err);
 
-	}
-	else if (command == 'command7') {
-		// merge the changes to the master branch
-		// use execSync to get the output of the command and execute it in the terminal
+										vscode.window.showErrorMessage('The dev branch does not exist in the remote repository.');
+									} else {
+										git.mergeFromTo('dev', 'testing', function (err, mergeSummary) {
+											// rest of the code
+											if (err) {
+												console.log(err);
+											}
+											else {
+												git.push(remote, 'testing', function (err) {
+													if (err) {
+														vscode.window.showErrorMessage(err);
+													}
+													else {
+														vscode.window.showInformationMessage('Pushed successfully');
+													}
+												});
+											}
+										});
+									}
+								});
+							}
+						});
+						// checkout to the testing branch
+						// git.fetch(remote, 'testing', function (err) {
+						// 	if (err) {
+						// 		vscode.window.showErrorMessage(err);
+						// 	}
+						// 	else {
+						// 		git.checkout('testing', function (err) {
+						// 			if (err) {
+						// 				vscode.window.showErrorMessage(err);
+						// 			}
+						// 			else {
+						// 				git.mergeFromTo(remote,'dev', function (err) {
+						// 					if (err) {
+						// 						vscode.window.showErrorMessage(err);
+						// 					}
+						// 					else {
+						// 						git.push(remote, 'testing', function (err) {
+						// 							if (err) {
+						// 								vscode.window.showErrorMessage(err);
+						// 							}
+						// 							else {
+						// 								vscode.window.showInformationMessage('Merged successfully');
+						// 							}
+						// 						});
+						// 					}
+						// 				});
+						// 			}
+						// 		});
+						// 	}
+						// });
+					}
+				});
+				break;
+		}
+	}, undefined, context.subscriptions);
 
-	}
 }
 function activate() {
 	vscode.window.showInformationMessage('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
@@ -423,8 +468,7 @@ function activate() {
 							break;
 						// in all other cases, build the script
 						case 'command6':
-						case 'command7':
-							await pushAndMerge(message.command);
+							await pushAndMerge();
 							break;
 						default:
 							buildScript(message.command);
@@ -472,7 +516,7 @@ function getWebviewFormContent(scriptUri, styleUri) {
 					<input type="text" id="commitMessage" name="commitMessage">
 				</div>
 			</div>
-			<button id="push" class="bigButton">Push</button>
+			<button id="push" class="bigButton">Push and Merge</button>
 			
 			<script  src="${scriptUri}"></script>
 		</body>
