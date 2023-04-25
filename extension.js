@@ -38,6 +38,9 @@ function getPanel1Content(scriptUri, styleUri) {
 		<div class="command6">
 			<button class="sideButton" id="command6">Deploy for Testing</button>
 		</div>
+		<div class="command7">
+			<button class="sideButton" id="command7">Help</button>
+		</div>
 		</body>
 		<script src="${scriptUri}"></script>
 		</html>
@@ -56,7 +59,6 @@ function cloneWebView() {
 
 	const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 	const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.js'));
-	console.log(scriptUri);
 	const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
 
 	panel.webview.html = getWebviewContent(scriptUri, styleUri);
@@ -152,7 +154,6 @@ function cloneWebView() {
 					const url = 'https://github.com/' + organization;
 					request.head(url, (error, response, body) => {
 						if (error) {
-							console.log(error);
 							return;
 						}
 						if (response.statusCode == 404) {
@@ -168,7 +169,6 @@ function cloneWebView() {
 							panel.webview.html = getWebviewContent(scriptUri, styleUri);
 							vscode.window.showInformationMessage('Organization added successfully');
 						}
-						console.log(response.statusCode);
 					});
 				}
 				addOrganization();
@@ -239,8 +239,6 @@ function buildScript(command) {
 	// set the path of the nodejs binary as the path of the shelljs
 	shelljs.config.execPath = nodePath;
 	shelljs.cd(path);
-	// print the current directory
-	console.log(shelljs.pwd());
 	// dispaly a waiting vscode window
 	vscode.window.withProgress({
 		location: vscode.ProgressLocation.Notification,
@@ -397,9 +395,6 @@ async function pushAndMerge() {
 
 }
 function activate() {
-	vscode.window.showInformationMessage('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
-
-	console.log('Congratulations, your extension "virtual-labs-experiment-generator" is now active!');
 	vscode.window.registerWebviewViewProvider(
 		'vlabs.experimentView', // Identifies the type of the webview. Used internally
 
@@ -425,6 +420,11 @@ function activate() {
 						// in all other cases, build the script
 						case 'command6':
 							await pushAndMerge();
+							break;
+						case 'command7':
+							// open the README.md file of this extension
+							const path = vscode.Uri.file(__dirname + '/README.md');
+							vscode.commands.executeCommand('markdown.showPreview', path);
 							break;
 						default:
 							buildScript(message.command);
