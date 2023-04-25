@@ -21,22 +21,22 @@ function getPanel1Content(scriptUri, styleUri) {
 		</head>
 		<body>
 		<div class="command1">
-			<button class="sideButton" id="command1">Clone the experiment repository</button>
+			<button class="sideButton" id="command1">Initialize Experiment</button>
 		</div>
 		<div class="command2">
-			<button class="sideButton" id="command2">Run validations </button>
+			<button class="sideButton" id="command2">Validate</button>
 		</div>
 		<div class="command3">
-			<button class="sideButton" id="command3">Build the experiment on the local machine</button>
+			<button class="sideButton" id="command3">Build Local</button>
 		</div>
 		<div class="command4">
-			<button class="sideButton" id="command4">Deploy the experiment locally</button>
+			<button class="sideButton" id="command4">Deploy Local</button>
 		</div>
 		<div class="command5">
-			<button class="sideButton" id="command5">Clean the repository</button>
+			<button class="sideButton" id="command5">Clean</button>
 		</div>
 		<div class="command6">
-			<button class="sideButton" id="command6">Push and merge</button>
+			<button class="sideButton" id="command6">Deploy for Testing</button>
 		</div>
 		</body>
 		<script src="${scriptUri}"></script>
@@ -334,7 +334,7 @@ async function pushAndMerge() {
 
 	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 
-	const repo = 'https://github.com/gautamxyz/repo.git'
+	const repo = 'https://github.com/virtual-labs/repo.git'
 	let remote = ""
 	let commitMessage = ""
 	panel.webview.onDidReceiveMessage(message => {
@@ -354,29 +354,30 @@ async function pushAndMerge() {
 					.addRemote('origin', remote)
 				git.push(remote, 'dev', function (err) {
 					if (err) {
-						vscode.window.showErrorMessage(err);
+						// vscode.window.showInformationMessage(err);
+						vscode.window.showErrorMessage("Error in pushing to dev: "+err);
 					}
 					else {
 						// merge the dev branch to the testing branch
 						git.fetch(remote, 'testing', function (err) {
 							if (err) {
-								vscode.window.showErrorMessage(err);
+								vscode.window.showErrorMessage("Error while fetching: "+err);
 							}
 							else {
 								git.checkout('testing', function (err) {
 									if (err) {
-										vscode.window.showErrorMessage(err);
+										vscode.window.showErrorMessage("Error while checkout: "+err);
 									}
 									else {
 										git.mergeFromTo('dev', 'testing', function (err, mergeSummary) {
 											// rest of the code
 											if (err) {
-												vscode.window.showErrorMessage(err);
+												vscode.window.showErrorMessage("Error while merging: "+err);
 											}
 											else {
 												git.push(remote, 'testing', function (err) {
 													if (err) {
-														vscode.window.showErrorMessage(err);
+														vscode.window.showErrorMessage("Error in pushing to testing: "+err);
 													}
 													else {
 														vscode.window.showInformationMessage('Pushed and merged successfully');
@@ -503,10 +504,11 @@ function getWebviewContent(scriptUri, styleUri) {
 			<h1>Virtual Labs Experiment Generator</h1>
 			<div class="Organization">
 				<label for="organization">Organization</label>
-				<select id="organization" name="organization">
-					${organizationOptions}
-						</select>
-				<button class="smallButton"  id="addOrganization">Add Organization</button>
+				<div class="select-container">
+					<select id="organization" name="organization" disabled>
+						${organizationOptions}
+							</select>
+				</div>
 			</div>
 			<div class="Experiment">
 				<label for="experimentName">Experiment Repository Name</label>
@@ -516,10 +518,11 @@ function getWebviewContent(scriptUri, styleUri) {
 			</div>
 			<div class="Branch">
 				<label for="branch">Branch</label>
-				<select id="branch" name="branch">
-					${branchOptions}
-				</select>
-				<button class="smallButton" id="addBranch">Add Branch</button>
+				<div class="select-container2">
+					<select id="branch" name="branch" disabled>
+						${branchOptions}
+					</select>
+				</div>
 			</div>
 			<button id="submit" class="bigButton">Submit</button>
 			

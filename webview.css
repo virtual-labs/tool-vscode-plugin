@@ -9,6 +9,7 @@ h1 {
     border: 3px solid #73AD21;
     padding: 10px;
     font-weight: bold;
+    margin-bottom: 1px;
 }
 
 .Experiment {
@@ -17,6 +18,8 @@ h1 {
     border: 3px solid #73AD21;
     padding: 10px;
     font-weight: bold;
+    margin-bottom: 1px;
+    text-align: left;
 }
 
 .Branch {
@@ -61,10 +64,10 @@ h1 {
 }
 
 .Name {
-    margin: auto;
     text-align: center;
     width: 35%;
     padding: 10px;
+    margin-right: 0.5%;
 }
 
 div {
@@ -75,14 +78,34 @@ div {
     text-align: center;
 }
 
-label {
-    margin-right: 10px;
-}
+/* label {
+    margin-right: auto;
+} */
 
-input {
+/* input {
     margin-right: 10px;
-}
+} */
 
-button {
+/* button {
     margin-left: 10px;
+} */
+
+.select-container {
+    background-color: grey;
+    margin-right: 20%;
+  }
+
+.select-container select {
+    /* text color as black */
+    color: black;
+}
+
+.select-container2 {
+    background-color: grey;
+    margin-right: 25%;
+  }
+
+.select-container2 select {
+    /* text color as black */
+    color: black;
 }
