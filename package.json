@@ -18,7 +18,7 @@
       "activitybar": [
         {
           "id": "vlabs-experiment-generator",
-          "title": "Experiment Generator",
+          "title": "Experiment",
           "icon": "images/icon.svg"
         }
       ]
@@ -28,7 +28,7 @@
         {
           "type": "webview",
           "id": "vlabs.experimentView",
-          "name": "Form Generator"
+          "name": "Authoring Plugin"
         }
       ]
     },

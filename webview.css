@@ -92,20 +92,28 @@ div {
 
 .select-container {
     background-color: grey;
-    margin-right: 20%;
+    margin-right: 10%;
   }
-
-.select-container select {
-    /* text color as black */
-    color: black;
+ 
+#experimentName {
+    margin-right: 10%;
 }
 
-.select-container2 {
-    background-color: grey;
-    margin-right: 25%;
-  }
 
-.select-container2 select {
-    /* text color as black */
-    color: black;
+#commitMessage{
+    display:block;
+    resize: vertical;
+    height:45px;
+    width: 30%;
+    margin-right: 10%;
+}
+
+#userName{
+    width: 30%;
+    margin-right: 10%;
+}
+
+#personalAccessToken{
+    width: 30%;
+    margin-right: 10%;
 }

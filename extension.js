@@ -331,8 +331,8 @@ async function pushAndMerge() {
 	const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
 
 	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
-
-	const repo = 'https://github.com/virtual-labs/repo.git'
+	// virtual-labs
+	const repo = 'https://github.com/mayankbhardwaj719/repo.git'
 	let remote = ""
 	let commitMessage = ""
 	panel.webview.onDidReceiveMessage(message => {
@@ -455,22 +455,17 @@ function getWebviewFormContent(scriptUri, styleUri) {
 			<h1>Virtual Labs Experiment Generator</h1>
 			<div class="Organization">
 				<label for="userName">Github User Name</label>
-				<div class="Name">
-					<input type="text" id="userName" name="userName">
-				</div>
+				<input type="text" id="userName" name="userName">
+				
 				
 			</div>
 			<div class="Experiment">
 				<label for="personalAccessToken">Personal Access Token</label>
-				<div class="Name">
-					<input type="text" id="personalAccessToken" name="personalAccessToken">
-				</div>
+				<input type="text" id="personalAccessToken" name="personalAccessToken">
 			</div>
 			<div class="Branch">
 				<label for="commitMessage">Commit Message</label>
-				<div class="Name">
-					<input type="text" id="commitMessage" name="commitMessage">
-				</div>
+				<textarea id="commitMessage" name="commitMessage" ></textarea>
 			</div>
 			<button id="push" class="bigButton">Push and Merge</button>
 			
@@ -485,8 +480,10 @@ function getWebviewContent(scriptUri, styleUri) {
 	const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
 	const branches = config.branches;
 	const organizations = config.organizations;
-	const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
-	const organizationOptions = organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('');
+	// const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
+	const branchOptions = "dev"
+	const organizationOptions = "virtual-labs"
+	// const organizationOptions = organizations.map(organization => `<option value="${organization}">${organization}</option>`).join('');
 
 
 	return `
@@ -505,23 +502,17 @@ function getWebviewContent(scriptUri, styleUri) {
 			<div class="Organization">
 				<label for="organization">Organization</label>
 				<div class="select-container">
-					<select id="organization" name="organization" disabled>
-						${organizationOptions}
-							</select>
+				<input id="organization" name="organization" type="text" value="${organizationOptions}" disabled>
 				</div>
 			</div>
 			<div class="Experiment">
 				<label for="experimentName">Experiment Repository Name</label>
-				<div class="Name">
-					<input type="text" id="experimentName" name="experimentName">
-				</div>
+				<input type="text" id="experimentName" name="experimentName">
 			</div>
 			<div class="Branch">
 				<label for="branch">Branch</label>
-				<div class="select-container2">
-					<select id="branch" name="branch" disabled>
-						${branchOptions}
-					</select>
+				<div class="select-container">
+				<input id="branch" name="branch" type="text" value="${branchOptions}" disabled>
 				</div>
 			</div>
 			<button id="submit" class="bigButton">Submit</button>
