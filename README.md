@@ -1,65 +1,23 @@
-# virtual-labs-experiment-generator README
+# Virtual Labs Experiment Authoring Plugin
 
-This is the README for your extension "virtual-labs-experiment-generator". After writing up a brief description, we recommend including the following sections.
+Virtual Labs is an initiative by the Ministry of Education, Government of India that aims to provide remote-access to simulation-based Labs in various disciplines of Science and Engineering. It also provides free, laboratory learning experience to students through remote experimentation.
 
-## Features
+This is a Visual Studio Code extension for authoring Virtual Labs experiments in a streamlined and user friendly way. It provides options that handle all the common tasks involved in experiment development.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+![image](./images/1.png)
 
-For example if there is an image subfolder under your extension project workspace:
 
-\!\[feature X\]\(images/feature-x.png\)
+## Getting Started
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. Install the extension from the Visual Studio Code Marketplace by searching for "Virtual Labs Experiment Authoring Plugin".
+2. Click on the extension icon on the left panel of Visual Studio Code.
+3. You will see the following list of options on the left sidebar:
+    * Initialize Experiment- By clicking on this you will be propmted to enter the Experiment Repository Name that you wish to initialize. Clicking on Submit will create and open a new folder inside the current folder with the name of the experiment repository name.
+    * Validate- Validates the code with eslint and also validates the experiment descriptor based on a schema.
+    * Build Local- Creates a build folder inside the experiment repository folder and builds the experiment locally.
+    * Deploy Local- Deploys the experiment locally on a web browser for the user to test.
+    * Clean- Deletes the build folder.
+    * Deploy Testing- Pushes the experiment to testing branch of the experiment repository and deploys the experiment on the github pages of Virtual Labs.
 
-## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
 
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
