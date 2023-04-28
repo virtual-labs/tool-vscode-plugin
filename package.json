@@ -1,6 +1,6 @@
 {
   "name": "virtual-labs-experiment-generator",
-  "displayName": "Virtual Labs Experiment Generator",
+  "displayName": "Virtual Labs Experiment Authoring Plugin",
   "description": "A VS Code Plugin to handle all the common tasks invovled in virtual labs experiment development.",
   "version": "0.0.1",
   "engines": {

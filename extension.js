@@ -1,5 +1,3 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
 const simpleGit = require('simple-git');
 const fs = require('fs');
@@ -16,7 +14,7 @@ function getPanel1Content(scriptUri, styleUri) {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">	
-			<title>Virtual Labs Experiment Generator</title>
+			<title>Virtual Labs Experiment Authoring Plugin</title>
 			<link rel="stylesheet" href="${styleUri}">
 		</head>
 		<body>
@@ -49,7 +47,7 @@ function getPanel1Content(scriptUri, styleUri) {
 function cloneWebView() {
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs', // Identifies the type of the webview. Used internally
-		'Virtual Labs Experiment Generator', // Title of the panel displayed to the user
+		'Virtual Labs Experiment Authoring Plugin', // Title of the panel displayed to the user
 		vscode.ViewColumn.One, // Editor column to show the new webview panel in.
 		{
 			enableScripts: true
@@ -71,7 +69,6 @@ function cloneWebView() {
 				const organization = message.organization;
 				const link = 'https://github.com/' + organization + '/' + experimentName + '.git';
 				const git = simpleGit();
-				// const options = ['--depth', '1'];
 				const path = vscode.workspace.workspaceFolders[0].uri.fsPath + '/' + experimentName;
 				// check if the experiment is already cloned
 				if (fs.existsSync(path)) {
@@ -105,7 +102,6 @@ function cloneWebView() {
 				panel.dispose();
 				break;
 			case 'addBranch':
-				// take a text input from the user and add it to the config file using async await
 				async function addBranch() {
 					const branch = await vscode.window.showInputBox({
 						placeHolder: "Enter the branch name",
@@ -133,7 +129,6 @@ function cloneWebView() {
 				addBranch();
 				break;
 			case 'addOrganization':
-				// take a text input from the user and add it to the config file using async await
 				async function addOrganization() {
 					const organization = await vscode.window.showInputBox({
 						placeHolder: "Enter the organization name",
@@ -204,20 +199,15 @@ async function runCommandWithProgress(command, object) {
 				);
 				let localData = "";
 				child.stdout.on("data", (data) => {
-					// vscode.window.showInformationMessage(`child entered`);
-					// And set its HTML content as the logs	
 					// pretty print the logs.stdout
 					const logsContent = `<pre>${data.toString()}</pre>`;
 					localData += logsContent;
-					// append the logs to the webview
 					panel.webview.html = localData;
 				});
 
 				token.onCancellationRequested(() => {
-					// vscode.window.showInformationMessage(`child exited`);
 					child.kill();
 					vscode.window.showInformationMessage(`Deploying cancelled by the user.`);
-					// reject(new Error(`Command '${command}' was cancelled by the user.`));
 				});
 			});
 		}
@@ -233,8 +223,6 @@ function buildScript(command) {
 	// check if the current directory has a package.json file
 	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
 	const packageJsonPath = path + '/package.json';
-	// from this point on, use shelljs in the directory of the package.json file
-	// locate nodejs binary on the system
 	const nodePath = process.execPath;
 	// set the path of the nodejs binary as the path of the shelljs
 	shelljs.config.execPath = nodePath;
@@ -252,8 +240,6 @@ function buildScript(command) {
 		});
 	});
 	if (!fs.existsSync(packageJsonPath)) {
-		// if not then create one using npm init using shelljs
-		// npm init -y
 		shelljs.exec('npm init -y');
 	}
 	shelljs.exec('npm i vlabs-buildexp@latest');
@@ -298,7 +284,6 @@ function buildScript(command) {
 			enableScripts: true
 		}
 	);
-	// And set its HTML content as the logs	
 	// pretty print the logs.stdout
 	const logsContent = `<pre>${logs.stdout}</pre>`;
 	panel.webview.html = logsContent;
@@ -316,8 +301,6 @@ async function pushAndMerge() {
 		vscode.window.showErrorMessage('Sorry, this is not a git repository');
 		return;
 	}
-	// run git config --list to get all the config variables
-
 	// create a webview panel
 	const panel = vscode.window.createWebviewPanel(
 		'vlabs.buildexp',
@@ -332,7 +315,7 @@ async function pushAndMerge() {
 
 	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 	// virtual-labs
-	const repo = 'https://github.com/mayankbhardwaj719/repo.git'
+	const repo = 'https://github.com/virtual-labs/repo.git'
 	let remote = ""
 	let commitMessage = ""
 	panel.webview.onDidReceiveMessage(message => {
@@ -447,12 +430,12 @@ function getWebviewFormContent(scriptUri, styleUri) {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Virtual Labs Experiment Generator</title>
+			<title>Virtual Labs Experiment Authoring Plugin</title>
 			<link rel="stylesheet" href="${styleUri}">
 		</head>
 
 		<body>
-			<h1>Virtual Labs Experiment Generator</h1>
+			<h1>Virtual Labs Experiment Authoring Plugin</h1>
 			<div class="Organization">
 				<label for="userName">Github User Name</label>
 				<input type="text" id="userName" name="userName">
@@ -493,12 +476,12 @@ function getWebviewContent(scriptUri, styleUri) {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Virtual Labs Experiment Generator</title>
+			<title>Virtual Labs Experiment Authoring Plugin</title>
 			<link rel="stylesheet" href="${styleUri}">
 		</head>
 
 		<body>
-			<h1>Virtual Labs Experiment Generator</h1>
+			<h1>Virtual Labs Experiment Authoring Plugin</h1>
 			<div class="Organization">
 				<label for="organization">Organization</label>
 				<div class="select-container">
