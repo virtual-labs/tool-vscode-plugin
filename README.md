@@ -10,8 +10,9 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
 ## Getting Started
 
 1. Install the extension from the Visual Studio Code Marketplace by searching for "Virtual Labs Experiment Authoring Plugin".
-2. Click on the extension icon on the left panel of Visual Studio Code.
-3. You will see the following list of options on the left sidebar:
+2. Open a folder in Visual Studio Code where you wish to create the experiment repository.
+3. Click on the extension icon on the left panel of Visual Studio Code.
+4. You will see the following list of options on the left sidebar:
     * Initialize Experiment- By clicking on this you will be propmted to enter the Experiment Repository Name that you wish to initialize. Clicking on Submit will create and open a new folder inside the current folder with the name of the experiment repository name.
     * Validate- Validates the code with eslint and also validates the experiment descriptor based on a schema.
     * Build Local- Creates a build folder inside the experiment repository folder and builds the experiment locally.
@@ -19,5 +20,4 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
     * Clean- Deletes the build folder.
     * Deploy Testing- Pushes the experiment to testing branch of the experiment repository and deploys the experiment on the github pages of Virtual Labs.
 
-
-
+**Note**: If there are multiple experiment folders in a directory, the user will have to open the folder on VS Code on which he/she wishes to work and this plugin will work on that folder only.
