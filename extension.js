@@ -315,7 +315,7 @@ async function pushAndMerge() {
 
 	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 	// virtual-labs
-	const repo = 'https://github.com/mayankbhardwaj719/repo.git'
+	const repo = 'https://github.com/virtual-labs/repo.git'
 	let remote = ""
 	let commitMessage = ""
 	panel.webview.onDidReceiveMessage(message => {
