@@ -315,7 +315,7 @@ async function pushAndMerge() {
 
 	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 	// virtual-labs
-	const repo = 'https://github.com/gautamxyz/repo.git'
+	const repo = 'https://github.com/mayankbhardwaj719/repo.git'
 	let remote = ""
 	let commitMessage = ""
 	panel.webview.onDidReceiveMessage(message => {
@@ -339,11 +339,20 @@ async function pushAndMerge() {
 								git.mergeFromTo('dev','testing').then(() => {
 									git.push(remote,'testing').then(() => {
 										vscode.window.showInformationMessage('Pushed to dev and merged to testing');
+										git.checkout('dev').then(() => {
+											vscode.window.showInformationMessage('You can start working again');
+										}).catch((err) => {
+											vscode.window.showErrorMessage("Could not checkout back to dev: "+err);
+										})
 									}).catch((err5) => {
 										vscode.window.showErrorMessage("Error while pushing to testing: "+err5);
 									})
 								}).catch((err4) => {
 									vscode.window.showErrorMessage("Error while merging: "+err4);
+									git.checkout('dev').then(() => {
+									}).catch((err) => {
+										vscode.window.showErrorMessage("Could not checkout back to dev: "+err);
+									})
 								})
 							}).catch((err3) => {
 								vscode.window.showErrorMessage("Error while checking out: "+err3);
@@ -351,7 +360,6 @@ async function pushAndMerge() {
 						}).catch((err2) => {
 							vscode.window.showErrorMessage("Error while fetching: "+err2);
 						})
-
 					}).catch((err1) => {
 						vscode.window.showErrorMessage("Error in pushing to dev: "+err1);
 					})
