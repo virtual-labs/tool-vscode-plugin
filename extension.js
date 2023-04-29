@@ -315,7 +315,7 @@ async function pushAndMerge() {
 
 	panel.webview.html = getWebviewFormContent(scriptUri, styleUri);
 	// virtual-labs
-	const repo = 'https://github.com/virtual-labs/repo.git'
+	const repo = 'https://github.com/gautamxyz/repo.git'
 	let remote = ""
 	let commitMessage = ""
 	panel.webview.onDidReceiveMessage(message => {
@@ -324,7 +324,6 @@ async function pushAndMerge() {
 				const userName = message.userName;
 				const personalAccessToken = message.personalAccessToken;
 				commitMessage = message.commitMessage;
-				// remote = repo.replace("://", `://${userName}:${personalAccessToken}@`)	
 				remote = repo.replace("https://", "https://" + userName + ":" + personalAccessToken + "@")
 				// extract the current directory name
 				const currentDir = path.split('/').pop();
@@ -333,45 +332,29 @@ async function pushAndMerge() {
 				git.add('./*')
 					.commit(commitMessage)
 					.addRemote('origin', remote)
-				git.push(remote, 'dev', function (err) {
-					if (err) {
-						// vscode.window.showInformationMessage(err);
-						vscode.window.showErrorMessage("Error in pushing to dev: "+err);
-					}
-					else {
-						// merge the dev branch to the testing branch
-						git.fetch(remote, 'testing', function (err) {
-							if (err) {
-								vscode.window.showErrorMessage("Error while fetching: "+err);
-							}
-							else {
-								git.checkout('testing', function (err) {
-									if (err) {
-										vscode.window.showErrorMessage("Error while checkout: "+err);
-									}
-									else {
-										git.mergeFromTo('dev', 'testing', function (err, mergeSummary) {
-											// rest of the code
-											if (err) {
-												vscode.window.showErrorMessage("Error while merging: "+err);
-											}
-											else {
-												git.push(remote, 'testing', function (err) {
-													if (err) {
-														vscode.window.showErrorMessage("Error in pushing to testing: "+err);
-													}
-													else {
-														vscode.window.showInformationMessage('Pushed and merged successfully');
-													}
-												});
-											}
-										});
-									}
+				
+					git.push(remote,'dev').then(() => {
+						git.fetch(remote,'testing').then(() => {
+							git.checkout('testing').then(() => {
+								git.mergeFromTo('dev','testing').then(() => {
+									git.push(remote,'testing').then(() => {
+										vscode.window.showInformationMessage('Pushed to dev and merged to testing');
+									}).catch((err5) => {
+										vscode.window.showErrorMessage("Error while pushing to testing: "+err5);
+									})
+								}).catch((err4) => {
+									vscode.window.showErrorMessage("Error while merging: "+err4);
 								})
-							}
+							}).catch((err3) => {
+								vscode.window.showErrorMessage("Error while checking out: "+err3);
+							})
+						}).catch((err2) => {
+							vscode.window.showErrorMessage("Error while fetching: "+err2);
 						})
-					}
-				});
+
+					}).catch((err1) => {
+						vscode.window.showErrorMessage("Error in pushing to dev: "+err1);
+					})
 				break;
 		}
 	}, undefined, context.subscriptions);
@@ -460,9 +443,9 @@ function getWebviewFormContent(scriptUri, styleUri) {
 
 function getWebviewContent(scriptUri, styleUri) {
 
-	const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
-	const branches = config.branches;
-	const organizations = config.organizations;
+	// const config = JSON.parse(fs.readFileSync(__dirname + '/config.json', 'utf8'));
+	// const branches = config.branches;
+	// const organizations = config.organizations;
 	// const branchOptions = branches.map(branch => `<option value="${branch}">${branch}</option>`).join('');
 	const branchOptions = "dev"
 	const organizationOptions = "virtual-labs"
