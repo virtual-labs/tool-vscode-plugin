@@ -441,7 +441,7 @@ function getWebviewFormContent(scriptUri, styleUri) {
 				<label for="commitMessage">Commit Message</label>
 				<textarea id="commitMessage" name="commitMessage" ></textarea>
 			</div>
-			<button id="push" class="bigButton">Push and Merge</button>
+			<button id="push" class="bigButton">Submit</button>
 			
 			<script  src="${scriptUri}"></script>
 		</body>
