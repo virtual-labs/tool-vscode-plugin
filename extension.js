@@ -330,6 +330,13 @@ async function pushAndMerge() {
 				remote = remote.replace("repo", currentDir);
 				
 				const git = simpleGit();
+				// check if .gitignore file exists
+				const gitignorePath = path + '/.gitignore';
+				console.log(gitignorePath)
+				if (!fs.existsSync(gitignorePath)) {
+					// ignore node_modules and build directory
+					fs.writeFileSync(gitignorePath, 'node_modules\nbuild');
+				}
 				git.add('./*').then(() => {
 					git.commit(commitMessage).then(() => {
 						return git.getRemotes(true)
