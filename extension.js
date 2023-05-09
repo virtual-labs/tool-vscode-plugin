@@ -328,41 +328,55 @@ async function pushAndMerge() {
 				// extract the current directory name
 				const currentDir = path.split('/').pop();
 				remote = remote.replace("repo", currentDir);
-				const git = simpleGit();
-				git.add('./*')
-					.commit(commitMessage)
-					.addRemote('origin', remote)
 				
-					git.push(remote,'dev').then(() => {
-						git.fetch(remote,'testing').then(() => {
-							git.checkout('testing').then(() => {
-								git.mergeFromTo('dev','testing').then(() => {
-									git.push(remote,'testing').then(() => {
-										vscode.window.showInformationMessage('Pushed to dev and merged to testing');
-										git.checkout('dev').then(() => {
-											vscode.window.showInformationMessage('You can start working again');
-										}).catch((err) => {
-											vscode.window.showErrorMessage("Could not checkout back to dev: "+err);
+				const git = simpleGit();
+				git.add('./*').then(() => {
+					git.commit(commitMessage).then(() => {
+						return git.getRemotes(true)
+							.then((remotes) => {
+								if (remotes.some((remote) => remote.name === 'origin')) {
+									return Promise.resolve();
+								} else {
+									return git.addRemote('origin', remote);
+								}
+							});
+					}).then(() => {
+						git.push(remote, 'dev').then(() => {
+							git.fetch(remote, 'testing').then(() => {
+								git.checkout('testing').then(() => {
+									git.mergeFromTo('dev', 'testing').then(() => {
+										git.push(remote, 'testing').then(() => {
+											vscode.window.showInformationMessage('Pushed to dev and merged to testing');
+											git.checkout('dev').then(() => {
+												vscode.window.showInformationMessage('You can start working again');
+											}).catch((err) => {
+												vscode.window.showErrorMessage("Could not checkout back to dev: " + err);
+											})
+										}).catch((err5) => {
+											vscode.window.showErrorMessage("Error while pushing to testing: " + err5);
 										})
-									}).catch((err5) => {
-										vscode.window.showErrorMessage("Error while pushing to testing: "+err5);
+									}).catch((err4) => {
+										vscode.window.showErrorMessage("Error while merging: " + err4);
+										git.checkout('dev').then(() => {
+										}).catch((err) => {
+											vscode.window.showErrorMessage("Could not checkout back to dev: " + err);
+										})
 									})
-								}).catch((err4) => {
-									vscode.window.showErrorMessage("Error while merging: "+err4);
-									git.checkout('dev').then(() => {
-									}).catch((err) => {
-										vscode.window.showErrorMessage("Could not checkout back to dev: "+err);
-									})
+								}).catch((err3) => {
+									vscode.window.showErrorMessage("Error while checking out: " + err3);
 								})
-							}).catch((err3) => {
-								vscode.window.showErrorMessage("Error while checking out: "+err3);
+							}).catch((err2) => {
+								vscode.window.showErrorMessage("Error while fetching: " + err2);
 							})
-						}).catch((err2) => {
-							vscode.window.showErrorMessage("Error while fetching: "+err2);
+						}).catch((err1) => {
+							vscode.window.showErrorMessage("Error in pushing to dev: " + err1);
 						})
-					}).catch((err1) => {
-						vscode.window.showErrorMessage("Error in pushing to dev: "+err1);
+					}).catch((err) => {
+						vscode.window.showErrorMessage("Error in commit: " + err);
 					})
+				}).catch((err) => {
+					vscode.window.showErrorMessage("Error in add: " + err);
+				})
 				break;
 		}
 	}, undefined, context.subscriptions);
