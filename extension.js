@@ -248,13 +248,13 @@ function buildScript(command) {
 	let panelTitle = ""
 	switch (command) {
 		case 'command2':
-			logs = shelljs.exec('npx vlabs-buildexp validate --expdesc --eslint');
+			logs = shelljs.exec('npx vlabs-buildexp validate');
 			panelTitle = "Validation Logs"
 			vscode.window.showInformationMessage('Validation successful, you can see the logs in the window');
 			break;
 
 		case 'command3':
-			logs = shelljs.exec('npx vlabs-buildexp build --validateEslint --validateExpdesc --clean');
+			logs = shelljs.exec('npx vlabs-buildexp clean-build-exp');
 			vscode.window.showInformationMessage('Build successful, you can see the logs in the window');
 			panelTitle = "Build Logs"
 			break;
