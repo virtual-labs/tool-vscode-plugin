@@ -1,0 +1,13 @@
+.sideButton{
+    background-color: #03b1fc;
+    margin: 5px;
+    text-align: center;
+    width: 70%;
+    height: 100%;
+    font-size: 1em;
+    color: black;
+    cursor: pointer;
+    border-radius: 8px;
+    align-items: center;
+    margin-left: 15%;
+}
