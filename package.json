@@ -1,6 +1,6 @@
 {
   "name": "virtual-labs-experiment-generator",
-  "displayName": "Virtual Labs Experiment Authoring Plugin",
+  "displayName": "Virtual Labs Experiment Authoring Environment",
   "description": "A VS Code Plugin to handle all the common tasks invovled in virtual labs experiment development.",
   "version": "0.0.1",
   "engines": {
@@ -28,7 +28,7 @@
         {
           "type": "webview",
           "id": "vlabs.experimentView",
-          "name": "Authoring Plugin"
+          "name": "Authoring Environment"
         }
       ]
     },

@@ -14,7 +14,7 @@ function getPanel1Content(scriptUri, styleUri) {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">	
-			<title>Virtual Labs Experiment Authoring Plugin</title>
+			<title>Virtual Labs Experiment Authoring Environment</title>
 			<link rel="stylesheet" href="${styleUri}">
 		</head>
 		<body>
@@ -47,7 +47,7 @@ function getPanel1Content(scriptUri, styleUri) {
 function cloneWebView() {
 	const panel = vscode.window.createWebviewPanel(
 		'virtualLabs', // Identifies the type of the webview. Used internally
-		'Virtual Labs Experiment Authoring Plugin', // Title of the panel displayed to the user
+		'Virtual Labs Experiment Authoring Environment', // Title of the panel displayed to the user
 		vscode.ViewColumn.One, // Editor column to show the new webview panel in.
 		{
 			enableScripts: true
@@ -442,12 +442,12 @@ function getWebviewFormContent(scriptUri, styleUri) {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Virtual Labs Experiment Authoring Plugin</title>
+			<title>Virtual Labs Experiment Authoring Environment</title>
 			<link rel="stylesheet" href="${styleUri}">
 		</head>
 
 		<body>
-			<h1>Virtual Labs Experiment Authoring Plugin</h1>
+			<h1>Virtual Labs Experiment Authoring Environment</h1>
 			<div class="Organization">
 				<label for="userName">Github User Name</label>
 				<input type="text" id="userName" name="userName">
@@ -488,12 +488,12 @@ function getWebviewContent(scriptUri, styleUri) {
 		<head>
 			<meta charset="UTF-8">
 			<meta name="viewport" content="width=device-width, initial-scale=1.0">
-			<title>Virtual Labs Experiment Authoring Plugin</title>
+			<title>Virtual Labs Experiment Authoring Environment</title>
 			<link rel="stylesheet" href="${styleUri}">
 		</head>
 
 		<body>
-			<h1>Virtual Labs Experiment Authoring Plugin</h1>
+			<h1>Virtual Labs Experiment Authoring Environment</h1>
 			<div class="Organization">
 				<label for="organization">Organization</label>
 				<div class="select-container">

@@ -1,11 +1,11 @@
-# Virtual Labs Experiment Authoring Plugin
+# Virtual Labs Experiment Authoring Environment
 
 Virtual Labs is an initiative by the Ministry of Education, Government of India that aims to provide remote-access to simulation-based Labs in various disciplines of Science and Engineering. It also provides free, laboratory learning experience to students through remote experimentation.
 
 This is a Visual Studio Code extension for authoring Virtual Labs experiments in a streamlined and user friendly way. It provides options that handle all the common tasks involved in experiment development.
 ## Getting Started
 
-1. Install the extension from the Visual Studio Code Marketplace by searching for "Virtual Labs Experiment Authoring Plugin".
+1. Install the extension from the Visual Studio Code Marketplace by searching for "Virtual Labs Experiment Authoring Environment".
 2. Open a folder in Visual Studio Code where you wish to create the experiment repository.
 3. Click on the extension icon on the left panel of Visual Studio Code.
 
@@ -25,7 +25,7 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
     ![image](./images/deploy.png)
     
 
-**Note**: If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this plugin will work on that folder only.
+**Note**: If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
 
 ## Developer Support
 
