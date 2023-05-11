@@ -18,6 +18,7 @@
   ],
   "main": "extension.js",
   "publisher": "Virtual-Labs",
+  "icon": "images/logo-for-vlabs.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
