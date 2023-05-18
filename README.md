@@ -9,11 +9,12 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
 2. Open a folder in Visual Studio Code where you wish to create the experiment repository.
 3. Click on the extension icon on the left panel of Visual Studio Code.
 
-    ![image](./images/sidebar.png)
+    ![Example Image](images/sidebar.png)
+
 
 4. You will see the following list of options on the left sidebar:
     * **Initialize Experiment**- By clicking on this you will be prompted to enter the Experiment Repository Name that you wish to initialize. Clicking on Submit will create and open a new folder inside the current folder with the name of the experiment repository name.
-    ![image](./images/clone.png)
+    ![image](images/clone.png)
     * **Validate** - Validates the code with eslint and also validates the experiment descriptor based on a schema.
     * **Build Local** - Creates a build folder inside the experiment repository folder and builds the experiment locally.
     * **Deploy Local** - Deploys the experiment locally on a web browser for the user to test.
@@ -22,10 +23,13 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
         - **Github User Name** - Here you have to enter your github username.
         - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
         - **Commit Message** - Here you can enter a short message describing the summary of the work you have done.
-    ![image](./images/deploy.png)
+    ![image](images/deploy.png)
     
 
-**Note**: If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
+**Note**: 
+- If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
+- Before using the **Deploy for Testing** functionality of the extension, you need to have the write permissions to the repository.
+- After initializing the experiment, the branch will be set to dev by default. Don't change the branch manually using command line/terminal as the extension takes care of it on it's own.
 
 ## Developer Support
 

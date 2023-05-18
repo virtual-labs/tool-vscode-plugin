@@ -1,8 +1,12 @@
 {
-  "name": "virtual-labs-experiment-generator",
+  "name": "virtual-labs-experiment-authoring-environment",
   "displayName": "Virtual Labs Experiment Authoring Environment",
-  "description": "A VS Code Plugin to handle all the common tasks invovled in virtual labs experiment development.",
-  "version": "0.0.1",
+  "description": "A VS Code extension to handle all the common tasks invovled in virtual labs experiment development.",
+  "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virtual-labs/tool-vscode-plugin/tree/main"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -10,9 +14,11 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:virtual-labs-experiment-generator.virtualLabs"
+    "onCommand:virtual-labs-experiment-authoring-environment.virtualLabs"
   ],
   "main": "extension.js",
+  "publisher": "Virtual-Labs",
+  "icon": "images/logo-for-vlabs.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
@@ -34,7 +40,7 @@
     },
     "commands": [
       {
-        "command": "virtual-labs-experiment-generator.virtualLabs",
+        "command": "virtual-labs-experiment-authoring-environment.virtualLabs",
         "title": "Virtual Labs",
         "icon": {
           "light": "images/icon.svg",
