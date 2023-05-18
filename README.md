@@ -26,7 +26,10 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
     ![image](images/deploy.png)
     
 
-**Note**: If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
+**Note**: 
+- If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
+- Before using the **Deploy for Testing** functionality of the extension, you need to have the write permissions to the repository.
+- After initializing the experiment, the branch will be set to dev by default. Don't change the branch manually using command line/terminal as the extension takes care of it on it's own.
 
 ## Developer Support
 
