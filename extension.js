@@ -227,6 +227,7 @@ function buildScript(command) {
 	// set the path of the nodejs binary as the path of the shelljs
 	shelljs.config.execPath = nodePath;
 	shelljs.cd(path);
+	console.log("previous",path)
 	// dispaly a waiting vscode window
 	vscode.window.withProgress({
 		location: vscode.ProgressLocation.Notification,
@@ -261,6 +262,7 @@ function buildScript(command) {
 		case 'command4':
 			// check if the build directory exists
 			const buildPath = path + '/build';
+			console.log(buildPath)
 			if (!fs.existsSync(buildPath)) {
 				vscode.window.showErrorMessage('Build directory does not exist, please run the build command first');
 				return;
