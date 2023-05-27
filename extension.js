@@ -3,6 +3,7 @@ const simpleGit = require('simple-git');
 const fs = require('fs');
 const request = require('request');
 const shelljs = require('shelljs');
+const axios = require('axios');
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -37,7 +38,10 @@ function getPanel1Content(scriptUri, styleUri) {
 			<button class="sideButton" id="command6">Deploy for Testing</button>
 		</div>
 		<div class="command7">
-			<button class="sideButton" id="command7">Help</button>
+			<button class="sideButton" id="command7">Submit for Review</button>
+		</div>
+		<div class="command8">
+			<button class="sideButton" id="command8">Help</button>
 		</div>
 		</body>
 		<script src="${scriptUri}"></script>
@@ -391,6 +395,109 @@ async function pushAndMerge() {
 	}, undefined, context.subscriptions);
 
 }
+function getPRContent(scriptUri, styleUri) {
+	return `
+	<!DOCTYPE html>
+		<html lang="en">
+
+		<head>
+			<meta charset="UTF-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+			<title>Virtual Labs Experiment Authoring Environment</title>
+			<link rel="stylesheet" href="${styleUri}">
+		</head>
+
+		<body>
+			<h1>Virtual Labs Experiment Authoring Environment</h1>
+			<div class="Organization">
+				<label for="userName">Pull Request Title</label>
+				<input type="text" id="title" name="userName">
+				
+				
+			</div>
+			<div class="Experiment">
+				<label for="personalAccessToken">Personal Access Token</label>
+				<input type="text" id="personalAccessToken" name="personalAccessToken">
+			</div>
+			<div class="Branch">
+				<label for="commitMessage">Description</label>
+				<textarea id="description" name="commitMessage" ></textarea>
+			</div>
+			<button id="pr" class="bigButton">Submit</button>
+			
+			<script  src="${scriptUri}"></script>
+		</body>
+
+		</html>`
+}
+
+function raisePR()	{
+
+	const path = vscode.workspace.workspaceFolders[0].uri.fsPath;
+	const nodePath = process.execPath;
+	// set the path of the nodejs binary as the path of the shelljs
+	shelljs.config.execPath = nodePath;
+	shelljs.cd(path);
+
+
+	if (shelljs.exec('git rev-parse --is-inside-work-tree').code !== 0) {
+		vscode.window.showErrorMessage('Sorry, this is not a git repository');
+		return;
+	}
+	// create a webview panel
+	const panel = vscode.window.createWebviewPanel(
+		'vlabs.buildexp',
+		'User Details',
+		vscode.ViewColumn.One,
+		{
+			enableScripts: true
+		}
+	);
+	const scriptUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/pr.js'));
+	const styleUri = panel.webview.asWebviewUri(vscode.Uri.file(__dirname + '/webview.css'));
+
+	panel.webview.html = getPRContent(scriptUri, styleUri);
+	panel.webview.onDidReceiveMessage(message => {
+		switch (message.command) {
+			case 'pr':
+				const title = message.title;
+				const personalAccessToken = message.personalAccessToken;
+				const description = message.description
+				
+
+				const headers = {
+					Authorization: 'Bearer ' + personalAccessToken,
+					'Content-Type': 'application/json',
+				};
+				const baseURL = "https://api.github.com"
+				// Define the pull request details
+				const owner = 'virtual-labs';
+				const repo = 'tool-vscode-plugin';
+				const base = 'main'; // Base branch (target branch)
+				const head = 'testing'; // Head branch (source branch)
+			
+				// Create the pull request
+				axios.post(`${baseURL}/repos/${owner}/${repo}/pulls`, {
+					title,
+					description,
+					head,
+					base
+				}, {
+					headers
+				})
+				.then(response => {
+					vscode.window.showInformationMessage('Pull request created successfully');
+					console.log('Pull request created:', response.data.html_url);
+				})
+				.catch(error => {
+					vscode.window.showErrorMessage("Error occured: "+error);
+					console.error('Error creating pull request:', error.response.data.message);
+				});
+				break;
+			}
+		}, undefined, context.subscriptions);
+
+}
 function activate() {
 	vscode.window.registerWebviewViewProvider(
 		'vlabs.experimentView', // Identifies the type of the webview. Used internally
@@ -419,6 +526,9 @@ function activate() {
 							await pushAndMerge();
 							break;
 						case 'command7':
+							raisePR();
+							break;
+						case 'command8':
 							// open the README.md file of this extension
 							const path = vscode.Uri.file(__dirname + '/README.md');
 							vscode.commands.executeCommand('markdown.showPreview', path);

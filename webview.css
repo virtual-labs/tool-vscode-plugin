@@ -108,7 +108,22 @@ div {
     margin-right: 10%;
 }
 
+#description{
+    display:block;
+    resize: vertical;
+    height:45px;
+    width: 30%;
+    margin-right: 10%;
+}
+
+
 #userName{
+    width: 30%;
+    margin-right: 10%;
+}
+
+
+#title{
     width: 30%;
     margin-right: 10%;
 }

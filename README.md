@@ -24,6 +24,11 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
         - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
         - **Commit Message** - Here you can enter a short message describing the summary of the work you have done.
     ![image](images/deploy.png)
+    * **Submit for Review** - Raises a pull request to the main branch of the experiment repository.
+        - **Pull Request title** - Here you have to enter the title of your pull request.
+        - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+        - **Description** - Here you can enter a short message describing the summary of the pull request you have created.
+    ![image](images/pR.png)
     
 
 **Note**: 

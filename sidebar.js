@@ -6,6 +6,7 @@ const command4 = document.getElementById('command4');
 const command5 = document.getElementById('command5');
 const command6 = document.getElementById('command6');
 const command7 = document.getElementById('command7');
+const command8 = document.getElementById('command8');
 
 command1.addEventListener('click', () => {
     vscode.postMessage({
@@ -40,5 +41,10 @@ command6.addEventListener('click', () => {
 command7.addEventListener('click', () => {
     vscode.postMessage({
         command: 'command7'
+    });
+});
+command8.addEventListener('click', () => {
+    vscode.postMessage({
+        command: 'command8'
     });
 });
