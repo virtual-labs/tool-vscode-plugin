@@ -24,12 +24,20 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
         - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
         - **Commit Message** - Here you can enter a short message describing the summary of the work you have done.
     ![image](images/deploy.png)
+    * **Submit for Review** - Raises a pull request to the main branch of the experiment repository.
+        - **Pull Request title** - Here you have to enter the title of your pull request.
+        - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+        - **Description** - Here you can enter a short message describing the summary of the pull request you have created.
+    ![image](images/pR.png)
     
 
 **Note**: 
 - If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
 - Before using the **Deploy for Testing** functionality of the extension, you need to have the write permissions to the repository.
 - After initializing the experiment, the branch will be set to dev by default. Don't change the branch manually using command line/terminal as the extension takes care of it on it's own.
+- Make sure that directory names don't contain spaces.
+- Try to use the latest version of npm and nodejs. The minimum requirement for nodejs version is 16.0.0 .
+- Also make sure that you have installed the latest version of Visual Studio Code.
 
 ## Developer Support
 
