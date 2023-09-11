@@ -247,7 +247,7 @@ function buildScript(command) {
 	if (!fs.existsSync(packageJsonPath)) {
 		shelljs.exec('npm init -y');
 	}
-	shelljs.exec('npm i virtual-labs-buildexp@latest');
+	shelljs.exec('npm i @virtual-labs/buildexp@latest');
 
 	let logs = null
 	let panelTitle = ""
