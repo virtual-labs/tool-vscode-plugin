@@ -247,19 +247,19 @@ function buildScript(command) {
 	if (!fs.existsSync(packageJsonPath)) {
 		shelljs.exec('npm init -y');
 	}
-	shelljs.exec('npm i vlabs-buildexp@latest');
+	shelljs.exec('npm i @virtual-labs/buildexp@latest');
 
 	let logs = null
 	let panelTitle = ""
 	switch (command) {
 		case 'command2':
-			logs = shelljs.exec('npx vlabs-buildexp validate');
+			logs = shelljs.exec('npx @virtual-labs/buildexp validate');
 			panelTitle = "Validation Logs"
 			vscode.window.showInformationMessage('Validation successful, you can see the logs in the window');
 			break;
 
 		case 'command3':
-			logs = shelljs.exec('npx vlabs-buildexp clean-build-exp');
+			logs = shelljs.exec('npx @virtual-labs/buildexp clean-build-exp');
 			vscode.window.showInformationMessage('Build successful, you can see the logs in the window');
 			panelTitle = "Build Logs"
 			break;
@@ -272,10 +272,10 @@ function buildScript(command) {
 				return;
 			}
 			let myObject = { logs2: null };
-			runCommand('npx vlabs-buildexp deploy', myObject)
+			runCommand('npx @virtual-labs/buildexp deploy', myObject)
 			break;
 		case 'command5':
-			logs = shelljs.exec('npx vlabs-buildexp clean');
+			logs = shelljs.exec('npx @virtual-labs/buildexp clean');
 			vscode.window.showInformationMessage('Cleaned the build directory');
 			panelTitle = "Clean Logs"
 			break;
