@@ -4,6 +4,8 @@ const fs = require('fs');
 const request = require('request');
 const shelljs = require('shelljs');
 const axios = require('axios');
+const terminate = require('terminate');
+
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -210,8 +212,16 @@ async function runCommandWithProgress(command, object) {
 				});
 
 				token.onCancellationRequested(() => {
-					child.kill();
-					vscode.window.showInformationMessage(`Deploying cancelled by the user.`);
+					// child.kill();
+					terminate(child.pid, function (err) {
+						if (err) { // you will get an error if you did not supply a valid process.pid
+						  vscode.window.showErrorMessage(`Error while trying to cancel `+ err);
+						}
+						else {
+						  vscode.window.showInformationMessage(`Deploying cancelled by the user.`);
+						  // NOTE: The above won't be run in this example as the process itself will be killed before.
+						}
+					  });
 				});
 			});
 		}
