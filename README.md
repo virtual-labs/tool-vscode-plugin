@@ -14,8 +14,8 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
 
 4. You will see the following list of options on the left sidebar:
     * **Initialize Experiment**- By clicking on this you will be prompted to enter the Experiment Repository Name that you wish to initialize. Clicking on Submit will create and open a new folder inside the current folder with the name of the experiment repository name.
-    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/clone.png"<br</center>
-        
+
+   <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/clone.png"<br> </center>   
     * **Validate** - Validates the code with eslint and also validates the experiment descriptor based on a schema.
     * **Build Local** - Creates a build folder inside the experiment repository folder and builds the experiment locally.
     * **Deploy Local** - Deploys the experiment locally on a web browser for the user to test.
@@ -24,12 +24,12 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
         - **Github User Name** - Here you have to enter your github username.
         - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
         - **Commit Message** - Here you can enter a short message describing the summary of the work you have done.
-    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/deploy.png"<br</center>
+    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/deploy.png"<br> </center>
     * **Submit for Review** - Raises a pull request to the main branch of the experiment repository.
         - **Pull Request title** - Here you have to enter the title of your pull request.
         - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
         - **Description** - Here you can enter a short message describing the summary of the pull request you have created.
-    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/pR.png"<br</center>
+    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/pR.png"<br> </center>
     
 
 **Note**: 
