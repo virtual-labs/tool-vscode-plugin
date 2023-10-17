@@ -9,7 +9,7 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
 2. Open a folder in Visual Studio Code where you wish to create the experiment repository.
 3. Click on the extension icon on the left panel of Visual Studio Code.
 
-    ![Example Image](images/sidebar.png)
+    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/sidebar.png"<br> </center>
 
 
 4. You will see the following list of options on the left sidebar:
