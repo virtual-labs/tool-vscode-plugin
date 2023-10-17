@@ -15,6 +15,7 @@ This is a Visual Studio Code extension for authoring Virtual Labs experiments in
 4. You will see the following list of options on the left sidebar:
     * **Initialize Experiment**- By clicking on this you will be prompted to enter the Experiment Repository Name that you wish to initialize. Clicking on Submit will create and open a new folder inside the current folder with the name of the experiment repository name.
     <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/clone.png"<br</center>
+        
     * **Validate** - Validates the code with eslint and also validates the experiment descriptor based on a schema.
     * **Build Local** - Creates a build folder inside the experiment repository folder and builds the experiment locally.
     * **Deploy Local** - Deploys the experiment locally on a web browser for the user to test.
