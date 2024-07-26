@@ -1,0 +1,80 @@
+{
+  "name": "virtual-labs-experiment-authoring-environment",
+  "displayName": "Virtual Labs Experiment Authoring Environment",
+  "description": "A VS Code extension to handle all the common tasks invovled in virtual labs experiment development.",
+  "version": "0.0.9",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/virtual-labs/tool-vscode-plugin/tree/main"
+  },
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:virtual-labs-experiment-authoring-environment.virtualLabs"
+  ],
+  "main": "extension.js",
+  "publisher": "Virtual-Labs",
+  "icon": "images/logo-for-vlabs.png",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vlabs-experiment-generator",
+          "title": "Experiment",
+          "icon": "images/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "vlabs-experiment-generator": [
+        {
+          "type": "webview",
+          "id": "vlabs.experimentView",
+          "name": "Authoring Environment"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "virtual-labs-experiment-authoring-environment.virtualLabs",
+        "title": "Virtual Labs",
+        "icon": {
+          "light": "images/icon.svg",
+          "dark": "images/icon.svg"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "pretest": "npm run lint",
+    "test": "node ./test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.74.0",
+    "@vscode/test-electron": "^2.2.0",
+    "eslint": "^8.28.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "jsdom": "^21.1.0",
+    "node-fetch": "^3.3.0",
+    "node-gyp": "^9.3.1",
+    "node-pre-gyp": "^0.17.0",
+    "request": "^2.88.2",
+    "shelljs": "^0.8.5",
+    "simple-git": "^3.17.0",
+    "terminate": "^2.6.1",
+    "url-exists-nodejs": "^0.2.4"
+  }
+}

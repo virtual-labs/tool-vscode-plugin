@@ -1,0 +1,134 @@
+
+h1 {
+    text-align: center;
+}
+
+.Organization {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    font-weight: bold;
+    margin-bottom: 1px;
+}
+
+.Experiment {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    font-weight: bold;
+    margin-bottom: 1px;
+    text-align: left;
+}
+
+.Branch {
+    margin: auto;
+    width: 60%;
+    border: 3px solid #73AD21;
+    padding: 10px;
+    font-weight: bold;
+}
+
+
+.bigButton {
+    margin: 0;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    color: white;
+    background-color: #03b1fc;
+    border: none;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 12px;
+    margin-top: 60px;
+
+    /* shift the button downwards */
+
+}
+
+.smallButton {
+    background-color: #03b1fc;
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+.Name {
+    text-align: center;
+    width: 35%;
+    padding: 10px;
+    margin-right: 0.5%;
+}
+
+div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+/* label {
+    margin-right: auto;
+} */
+
+/* input {
+    margin-right: 10px;
+} */
+
+/* button {
+    margin-left: 10px;
+} */
+
+.select-container {
+    background-color: grey;
+    margin-right: 10%;
+  }
+ 
+#experimentName {
+    margin-right: 10%;
+}
+
+
+#commitMessage{
+    display:block;
+    resize: vertical;
+    height:45px;
+    width: 30%;
+    margin-right: 10%;
+}
+
+#description{
+    display:block;
+    resize: vertical;
+    height:45px;
+    width: 30%;
+    margin-right: 10%;
+}
+
+
+#userName{
+    width: 30%;
+    margin-right: 10%;
+}
+
+
+#title{
+    width: 30%;
+    margin-right: 10%;
+}
+
+#personalAccessToken{
+    width: 30%;
+    margin-right: 10%;
+}
