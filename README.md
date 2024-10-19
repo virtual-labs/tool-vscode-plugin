@@ -12,6 +12,7 @@ This document outlines the usage of the Visual Studio Code Extension developed t
     * In Visual Studio Code, open the folder where you want to create the experiment repository.
 3. **Access the Extension:**
     * Click the extension icon located on the left panel of Visual Studio Code.
+    
         <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/sidebar.png"<br> </center>
 4. **Options in the Sidebar:** The following options will appear in the sidebar:
     * **Initialize Experiment:**
@@ -41,6 +42,27 @@ This document outlines the usage of the Visual Studio Code Extension developed t
 ## Known issues and Workarounds:
 When using the Virtual Labs Experiment Authoring Environment, you may encounter the following issues. Here are some common issues along with workarounds to ensure smooth usage of the extension:
 
+* **npm and node.js Versions:**
+  * **Issue:** Using outdated versions of npm or node.js may result in compatibility issues.
+  * **Workaround:** Make sure to use the latest versions of npm and node.js. The minimum required version for node.js is 16.0.0.
+
+* **Visual Studio Code Version:**
+  * **Issue:** Using an outdated version of Visual Studio Code may affect the extension’s functionality.
+  * **Workaround:** Ensure you are using the latest version of Visual Studio Code to avoid any issues.
+
+* **Blank validate.log or build.log on Windows:**
+  * **Issue:** On Windows machines, the Virtual Lab Extension may output blank validate.log or build.log files.
+  * **Worksaround:** 
+    1. Run the following commands in the Visual Studio Code terminal:
+        * `npm install -g shelljs`
+        * `npm install cjs`
+        * `npm install inflight --save`
+        * `npm install triple-beam --save`
+        * `npm install stack-trace --save`
+    2. Uninstall the Virtual Labs Extension.
+    3. Close and reopen Visual Studio Code.
+    4. Reinstall the Virtual Labs Extension.
+
 * **Multiple Experiment Folders in the Same Directory:**
   * **Issue:** If multiple experiment folders are present in the same directory, the extension may not work as expected.
   * **Workaround:** You must open the specific folder you are working on in Visual Studio Code. The extension only operates within the currently opened folder.
@@ -60,14 +82,6 @@ When using the Virtual Labs Experiment Authoring Environment, you may encounter 
 * **Testing Content Changes:**
   * **Issue:** When testing changes made to the experiment content, the current session may not reflect updates.
   * **Workaround:** Stop the current session and click on Deploy for Testing again to see the updated content.
-
-* **npm and node.js Versions:**
-  * **Issue:** Using outdated versions of npm or node.js may result in compatibility issues.
-  * **Workaround:** Make sure to use the latest versions of npm and node.js. The minimum required version for node.js is 16.0.0.
-
-* **Visual Studio Code Version:**
-  * **Issue:** Using an outdated version of Visual Studio Code may affect the extension’s functionality.
-  * **Workaround:** Ensure you are using the latest version of Visual Studio Code to avoid any issues.
 
 ## Developer Support
 If you encounter any bugs or difficulties while using this extension, please follow these steps:
