@@ -1,49 +1,90 @@
 # Virtual Labs Experiment Authoring Environment
 
-Virtual Labs is an initiative by the Ministry of Education, Government of India that aims to provide remote-access to simulation-based Labs in various disciplines of Science and Engineering. It also provides free, laboratory learning experience to students through remote experimentation.
+**Virtual Labs** is an initiative by the Ministry of Education, Government of India, that provides remote access to simulation-based labs across various disciplines in Science and Engineering. This initiative allows students to engage in a free, interactive laboratory learning experience through remote experimentation.
 
-This is a Visual Studio Code extension for authoring Virtual Labs experiments in a streamlined and user friendly way. It provides options that handle all the common tasks involved in experiment development.
+This document explains how to use the **Visual Studio Code Extension** designed to streamline the process of authoring Virtual Labs experiments. The extension simplifies common tasks in experiment development.
+
 ## Getting Started
 
-1. Install the extension from the Visual Studio Code Marketplace by searching for "Virtual Labs Experiment Authoring Environment".
-2. Open a folder in Visual Studio Code where you wish to create the experiment repository.
-3. Click on the extension icon on the left panel of Visual Studio Code.
+1. **Install the Extension:**
+    * Search for **Virtual Labs Experiment Authoring Environment** in the Visual Studio Code Marketplace and install the extension.
+2. **Open a Folder:**
+    * Open the folder in Visual Studio Code where you want to create the experiment repository.
+3. **Access the Extension:**
+    * Click the extension icon located on the left panel of Visual Studio Code.
+      <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/sidebar.png"<br> </center>
+4. **Options in the Sidebar:** The following options will appear in the sidebar:
+    * **Initialize Experiment:**
+      Prompts you to enter the experiment repository name. Upon submission, a new folder is created inside the current directory.
+      <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/clone.png"<br> </center>   
+    * **Validate:**
+      Runs code validation using ESLint and validates the experiment descriptor against a predefined schema.
+    * **Build Local:**  
+        Generates a `build` folder inside the repository and builds the experiment locally.
+    * **Deploy Local:** 
+        Deploys the experiment on a local web server for testing.
+    * **Clean:**
+        Deletes the `build` folder to reset the environment.
+    * **Deploy for Testing:**
+        * Pushes the experiment to the testing branch of the repository and deploys it on GitHub Pages.
+            * **Github Username:** Enter the developer's GitHub username.
+            * **Personal Access Token:** Generate one by [following these steps.](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+            * **Commit Message:**  Add a short summary of the changes.
+            <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/deploy.png"<br> </center>    
+    * **Submit for Review:** 
+        * Raises a pull request (PR) to the `main` branch of the repository.
+            * **Pull Request Title:** Title for the PR.
+            * **Personal Access Token:** Refer to these [step](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
+            * **Description:** Briefly summarize the pull request.
+            <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/pR.png"<br> </center>
 
-    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/sidebar.png"<br> </center>
+## Known issues and Workarounds:
+Below are common issues and their solutions to ensure smooth usage of the extension:
 
+* **npm and node.js Versions:**
+  * **Issue:** Using outdated versions of `npm` or node.js may cause compatibility issues.
+  * **Workaround:** Ensure you’re using the latest versions of `npm` and `node.js`. The minimum required version for `node.js` is 16.0.0.
 
-4. You will see the following list of options on the left sidebar:
-    * **Initialize Experiment**- By clicking on this you will be prompted to enter the Experiment Repository Name that you wish to initialize. Clicking on Submit will create and open a new folder inside the current folder with the name of the experiment repository name.
-   <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/clone.png"<br> </center>   
-    
-    * **Validate** - Validates the code with eslint and also validates the experiment descriptor based on a schema.
-    * **Build Local** - Creates a build folder inside the experiment repository folder and builds the experiment locally.
-    * **Deploy Local** - Deploys the experiment locally on a web browser for the user to test.
-    * **Clean**- Deletes the build folder.
-    * **Deploy for Testing**- Pushes the experiment to testing branch of the experiment repository and deploys the experiment on the github pages of Virtual Labs.
-        - **Github User Name** - Here you have to enter your github username.
-        - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
-        - **Commit Message** - Here you can enter a short message describing the summary of the work you have done.
-    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/deploy.png"<br> </center>
-    
-    * **Submit for Review** - Raises a pull request to the main branch of the experiment repository.
-        - **Pull Request title** - Here you have to enter the title of your pull request.
-        - **Personal Access Token** - Here you have to enter your personal access token. You can generate a personal access token by following the steps given [here](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token).
-        - **Description** - Here you can enter a short message describing the summary of the pull request you have created.
-    <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/pR.png"<br> </center>
-    
+* **Visual Studio Code Version:**
+  * **Issue:** An outdated Visual Studio Code version may impact the extension’s functionality.
+  * **Workaround:** Update to the latest version of Visual Studio Code.
 
-**Note**: 
-- If there are multiple experiment folders in a directory, you will have to open the folder on VS Code on which you wish to work and this extension will work on that folder only.
-- Before using the **Deploy for Testing** functionality of the extension, you need to have the write permissions to the repository.
-- After initializing the experiment, the branch will be set to dev by default. Don't change the branch manually using command line/terminal as the extension takes care of it on it's own.
-- Make sure that directory names don't contain spaces.
-- Try to use the latest version of npm and nodejs. The minimum requirement for nodejs version is 16.0.0 .
-- Also make sure that you have installed the latest version of Visual Studio Code.
+* **Blank validate.log or build.log on Windows:**
+  * **Issue:** On Windows, the extension might generate blank `validate.log` or `build.log` files.
+  * **Workaround:** 
+    1. Run these commands in the VSCode terminal:
+        * `npm install -g shelljs`
+        * `npm install cjs`
+        * `npm install inflight --save`
+        * `npm install triple-beam --save`
+        * `npm install stack-trace --save`
+    2. Uninstall the Virtual Labs Extension.
+    3. Close and reopen Visual Studio Code.
+    4. Reinstall the Virtual Labs Extension.
+
+* **Multiple Experiment Folders in the Same Directory:**
+  * **Issue:** If multiple experiment folders exist in the same directory, the extension may not function as expected.
+  * **Workaround:** Open the specific folder in Visual Studio Code. The extension operates only within the currently opened folder.
+
+* **Deploy for Testing - Write Permissions:**
+  * **Issue:** The `Deploy for Testing` feature requires write permissions to the repository.
+  * **Workaround:** Ensure you have the necessary permissions. If not, request access from the repository owner.
+
+* **Branch Management:**
+  * **Issue:** After initializing an experiment, the branch is automatically set to `dev`.
+  * **Workaround:** Do not manually change the branch via the terminal; the extension handles branch management.
+
+* **Directory Names:**
+  * **Issue:** Directory names containing spaces can cause issues during deployment.
+  * **Workaround:** Ensure directory names are free of spaces.
+
+* **Testing Content Changes:**
+  * **Issue:** Changes to experiment content may not reflect immediately during testing.
+  * **Workaround:** Stop the current session and click **Deploy for Testing** again.
 
 ## Developer Support
+If you encounter bugs or difficulties while using the extension, follow these steps:
 
-If you face any difficulty in using this extension or find any bug then you can perform the following steps
-- Take a screenshot of the bug you encountered or the problem you got.
-- Explain in brief the steps you performed before encountering the bug/problem and attach a screenshot of the same.
-- Email us at [dev-support@vlabs.ac.in](dev-support@vlabs.ac.in).
+* Take a screenshot of the issue.
+* Briefly describe the steps leading to the issue and attach the screenshot.
+* Email the details to [dev-support@vlabs.ac.in](dev-support@vlabs.ac.in).
