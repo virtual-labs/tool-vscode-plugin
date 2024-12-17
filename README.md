@@ -38,6 +38,14 @@ This document explains how to use the **Visual Studio Code Extension** designed 
             * **Description:** Briefly summarize the pull request.
             <center><img src="https://raw.githubusercontent.com/virtual-labs/tool-vscode-plugin/main/images/pR.png"<br> </center>
 
+## Common Mistakes:
+
+* * **Issue:** Error `ENOENT: no such file or directory, open 'experiment-name.md'` appears in the build log.
+  * **Workaround:** Ensure you open the specific experiment folder in the Visual Studio Code explorer, not the parent folder containing the experiment. The extension works only within the currently opened folder.
+
+* * **Issue:** Re-initializing the experiment from the start for every code change takes too much time.
+  * **Workaround:** Once initialized, you do not need to reinitialize the experiment for every change. Simply clean the build and resume from the validation step.
+
 ## Known issues and Workarounds:
 Below are common issues and their solutions to ensure smooth usage of the extension:
 
@@ -65,6 +73,10 @@ Below are common issues and their solutions to ensure smooth usage of the extens
 * **Multiple Experiment Folders in the Same Directory:**
   * **Issue:** If multiple experiment folders exist in the same directory, the extension may not function as expected.
   * **Workaround:** Open the specific folder in Visual Studio Code. The extension operates only within the currently opened folder.
+
+* **Local Code Changes Not Visible:**
+  * **Issue:** Local code changes do not reflect even after redeploying the experiment.
+  * **Workaround:** Clear the browser cache, clean the build, rebuild the experiment, and restart the local deployment.
 
 * **Deploy for Testing - Write Permissions:**
   * **Issue:** The `Deploy for Testing` feature requires write permissions to the repository.
